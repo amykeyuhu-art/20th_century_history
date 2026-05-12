@@ -1,0 +1,8 @@
+Backup generated: 2026-05-12 04:05:20 UTC
+Host: AmyHudeMacBook-Air.local
+
+Contents:
+  site/index.html + site/history-exhibition.html (same file)
+  site/assets/ (155 files)
+  site/images/ (43 files)
+  deploy-snapshot/ (copy of contemporarychina-historyarchive without .git)
