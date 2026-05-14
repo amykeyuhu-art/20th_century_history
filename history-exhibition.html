@@ -1,0 +1,1819 @@
+<!DOCTYPE html>
+<html lang="en" class="is-cover-loading">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="application-name" content="contemporarychina-historyarchive" />
+<title>contemporarychina-historyarchive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Averia+Serif+Libre:ital,wght@0,300;0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+html { scroll-behavior: smooth; min-height: 100%; scroll-padding-top: 88px; }
+html.is-cover-loading,
+html.is-cover-loading body {
+  overflow: hidden;
+  height: 100%;
+}
+html.is-cover-loading body {
+  touch-action: none;
+}
+.cover-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 2600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+.cover-loader-back {
+  position: absolute;
+  inset: 0;
+  background: #000000;
+}
+.cover-loader-grain {
+  position: absolute;
+  inset: -20%;
+  opacity: 0.11;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  animation: coverGrainDrift 10s linear infinite;
+  will-change: transform;
+}
+@keyframes coverGrainDrift {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(-1.2%, 0.8%) rotate(0.02deg); }
+  66% { transform: translate(0.9%, -1%) rotate(-0.02deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+.cover-loader-label {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  font-family: "Cormorant Garamond", "Libre Baskerville", "Times New Roman", Times, serif;
+  font-size: clamp(0.95rem, 2.4vw, 1.2rem);
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: 0.42em;
+  text-transform: lowercase;
+  color: rgba(255, 255, 255, 0.52);
+  animation: coverLoaderPulse 2.4s ease-in-out infinite;
+}
+@keyframes coverLoaderPulse {
+  0%, 100% { opacity: 0.34; }
+  50% { opacity: 0.58; }
+}
+html.is-cover-loading nav,
+html.is-cover-loading #siteLangToggle {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: #fff;
+  overflow-x: hidden;
+  position: relative;
+  background: #050000;
+  min-height: 100vh;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 90% 70% at 15% 10%, rgba(140, 0, 0, 0.42), transparent 52%),
+    radial-gradient(ellipse 75% 65% at 88% 75%, rgba(100, 0, 0, 0.38), transparent 48%),
+    radial-gradient(ellipse 55% 50% at 50% 100%, rgba(60, 0, 0, 0.35), transparent 45%),
+    linear-gradient(155deg, #000 0%, #0d0202 28%, #1a0505 52%, #000 78%, #080000 100%);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 280% 280%;
+  background-position: 0% 0%, 0% 0%, 0% 0%, 0% 50%;
+  animation: siteBgPulse 22s ease-in-out infinite alternate, siteBgDrift 38s linear infinite;
+}
+@keyframes siteBgPulse {
+  0% { opacity: 1; filter: saturate(1) brightness(1); }
+  100% { opacity: 0.88; filter: saturate(1.15) brightness(1.06); }
+}
+@keyframes siteBgDrift {
+  0% { background-position: 0% 0%, 0% 0%, 0% 0%, 0% 40%; }
+  50% { background-position: 8% 6%, -6% -4%, 0% -8%, 100% 55%; }
+  100% { background-position: 0% 0%, 0% 0%, 0% 0%, 0% 40%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body::before { animation: none; opacity: 0.95; }
+  #stories .story-card { transition: none; }
+  #stories .story-card:hover { transform: none; }
+  #events .grid-item { transition: none; }
+  #events .grid-item:hover { transform: none; }
+  #events .grid-item img { transition: none; }
+  #events .grid-item:hover img { transform: none; opacity: 1; }
+}
+nav { position: fixed; left:0; right:0; top:0; padding:20px 40px; display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,.38); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index:1000; box-sizing:border-box; border-bottom:1px solid transparent; box-shadow:0 0 0 rgba(0,0,0,0); transition:background .45s ease,border-color .45s ease,box-shadow .45s ease; }
+nav.nav-scrolled { background:rgba(0,0,0,.78); border-bottom-color:rgba(255,80,80,.18); box-shadow:0 14px 40px rgba(0,0,0,.42); }
+nav .menu { display:flex; gap:24px; margin-right:20px; flex-wrap:wrap; justify-content:flex-end; }
+nav .menu a { color:#fff; text-decoration:none; font-size:15px; position:relative; padding-bottom:3px; transition:color .3s ease; }
+nav .menu a::after { content:""; position:absolute; left:0; bottom:0; width:100%; height:1px; background:rgba(255,120,100,.55); transform:scaleX(0); transform-origin:left center; transition:transform .4s cubic-bezier(0.22,1,0.36,1); }
+nav .menu a:hover { color:rgba(255,230,220,.95); }
+nav .menu a:hover::after, nav .menu a:focus-visible::after { transform:scaleX(1); }
+nav .menu a:focus-visible { outline:1px solid rgba(255,100,90,.45); outline-offset:4px; }
+nav > div:first-child { min-width: 0; flex: 1 1 auto; margin-right: 12px; }
+nav > div:first-child b { font-size: clamp(10px, 2.1vw, 14px); font-weight: 700; letter-spacing: 0.04em; line-height: 1.25; word-break: break-word; }
+section { min-height:100vh; padding:120px 60px; box-sizing:border-box; }
+
+#cover {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(20px, 3.5vw, 40px);
+  align-items: stretch;
+  padding-top: 110px;
+  padding-bottom: 48px;
+  box-sizing: border-box;
+  min-height: calc(100vh - 80px);
+}
+#cover > div:first-of-type {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+#cover > div:last-of-type {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: min(78vh, 720px);
+  max-height: calc(100vh - 100px);
+}
+#cover .title-cn {
+  font-family: "Noto Serif SC", "Source Han Serif SC", "Source Han Serif CN", "Songti SC", "PingFang SC", serif;
+  font-weight: 700;
+  font-size: clamp(2.35rem, 5.1vw, 3.85rem);
+  line-height: 1.2;
+  letter-spacing: 0.06em;
+}
+#cover .title-en {
+  font-family: "Abril Fatface", Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-size: clamp(1.35rem, 2.85vw, 2.1rem);
+  line-height: 1.35;
+  letter-spacing: 0.02em;
+  margin-top: 1.35rem;
+  opacity: 0.94;
+}
+#cover img {
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  height: 100%;
+  max-height: none;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+#cover .cover-image-credit {
+  font-size: 12px;
+  opacity: 0.7;
+  text-align: right;
+  margin-top: 10px;
+  flex-shrink: 0;
+}
+#cover > div:last-of-type img {
+  will-change: transform;
+}
+
+#timeline { min-height:170vh; position:relative; padding:0; background:transparent; }
+#timeline .timeline-intro {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0 20px;
+  z-index: 2;
+  pointer-events: none;
+  overflow: visible;
+}
+#timeline .timeline-heading-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  opacity: 0;
+  transform: translate3d(0, 20vh, 0);
+  position: relative;
+  z-index: 3;
+  will-change: transform, opacity;
+}
+#timeline .timeline-title {
+  font-size: clamp(56px, 10vw, 118px);
+  margin: 0;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 1;
+  transform: none;
+  position: relative;
+  z-index: 2;
+}
+#timeline .timeline-sub {
+  margin-top: 18px;
+  opacity: 1;
+  transform: none;
+  font-family: "Averia Serif Libre", "Akvarel MF", "Akvarel", "Times New Roman", Georgia, serif;
+  font-size: clamp(20px, 3vw, 32px);
+  font-weight: 400;
+  letter-spacing: 0.24em;
+  position: relative;
+  z-index: 2;
+}
+#timeline .timeline-gallery {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  overflow-x: auto;
+  scrollbar-width: none;
+  opacity: 0;
+  transform: translate3d(0, 12vh, 0) scale(0.94);
+  transform-origin: 50% 50%;
+  z-index: 5;
+  box-sizing: border-box;
+  will-change: transform, opacity;
+}
+@supports (justify-content: safe center) {
+  #timeline .timeline-gallery {
+    justify-content: safe center;
+  }
+}
+#timeline .timeline-gallery-track {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 36px;
+  padding: 0 6vw;
+  width: max-content;
+  box-sizing: border-box;
+}
+#timeline .timeline-gallery::-webkit-scrollbar { display:none; }
+#timeline .timeline-item { min-width:420px; max-width:420px; }
+#timeline .timeline-item img { width:100%; height:250px; object-fit:cover; }
+#timeline .caption h3 { margin:10px 0 6px; }
+#timeline .timeline-desc ul { margin:0; padding-left:1.2em; }
+#timeline .timeline-desc li { margin:4px 0; font-size:13px; line-height:1.55; color:rgba(255,255,255,.88); }
+
+#stories { max-width: min(1200px, 100%); margin: 0 auto; }
+#stories .stories-head {
+  text-align: center;
+  margin-bottom: 2.6rem;
+}
+#stories .stories-section-title {
+  font-family: "Abril Fatface", Georgia, "Times New Roman", serif;
+  font-size: clamp(2.35rem, 6vw, 4rem);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin: 0 0 1rem;
+  line-height: 1.12;
+  color: rgba(255, 248, 245, 0.96);
+}
+#stories .stories-section-rule {
+  width: min(280px, 58vw);
+  height: 2px;
+  margin: 0 auto;
+  border: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 70, 70, 0.35) 15%,
+    rgba(255, 110, 95, 0.9) 50%,
+    rgba(255, 70, 70, 0.35) 85%,
+    transparent
+  );
+}
+#stories .story-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px 36px;
+  align-items: stretch;
+}
+#stories .story-card {
+  min-width: 0;
+  width: 100%;
+  max-width: none;
+  background: rgba(255, 0, 0, 0.08);
+  border: 1px solid rgba(255, 0, 0, 0.2);
+  cursor: pointer;
+  border-radius: 2px;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s ease, border-color 0.35s ease;
+}
+#stories .story-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.48), 0 0 0 1px rgba(255, 90, 80, 0.2);
+  border-color: rgba(255, 90, 80, 0.35);
+}
+#stories .story-card:focus-visible {
+  outline: 2px solid rgba(255, 100, 90, 0.55);
+  outline-offset: 4px;
+}
+#stories .story-thumb { height:220px; overflow:hidden; background:#000; position:relative; --mx:0px; --my:0px; }
+#stories .story-thumb img { width:100%; height:100%; object-fit:cover; display:block; transform:translate3d(var(--mx), var(--my), 0) scale(1.03); transform-origin:center center; transition:transform .2s ease-out; }
+#stories .story-card:hover .story-thumb img { transform:translate3d(var(--mx), var(--my), 0) scale(1.08); }
+/* Same frame (220px); center subject reads larger via scale + clip */
+#stories .story-card[data-story="1"] .story-thumb img,
+#stories .story-card[data-story="4"] .story-thumb img {
+  object-fit: contain;
+  transform: translate3d(var(--mx), var(--my), 0) scale(1.24);
+  transition: transform .22s ease-out;
+}
+#stories .story-card[data-story="1"]:hover .story-thumb img,
+#stories .story-card[data-story="4"]:hover .story-thumb img {
+  transform: translate3d(var(--mx), var(--my), 0) scale(1.38);
+}
+#stories .story-card[data-story="2"] .story-thumb img { object-fit:contain; transform:translate3d(var(--mx), var(--my), 0) scale(1.14); transform-origin:center center; }
+#stories .story-card[data-story="2"]:hover .story-thumb img { transform:translate3d(var(--mx), var(--my), 0) scale(1.22); }
+#stories .story-card[data-story="3"] .story-thumb img { object-fit:contain; transform:translate3d(var(--mx), var(--my), 0) scale(1); transform-origin:center center; transition:transform .28s ease-out; }
+#stories .story-card[data-story="3"]:hover .story-thumb img { transform:translate3d(var(--mx), var(--my), 0) scale(1.24); }
+#stories .story-meta { padding:14px 16px 18px; }
+#stories .story-title { margin:0; font-size:15px; line-height:1.35; }
+#stories .story-sub { margin:6px 0 0; font-size:12px; opacity:.7; }
+
+#events .section-heading {
+  font-family: "Abril Fatface", Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-size: clamp(2.35rem, 6vw, 4rem);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin: 0 0 2rem;
+  color: rgba(255, 248, 245, 0.96);
+}
+#events .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:15px; }
+#events .grid-item { position:relative; height:220px; background:#000; overflow:hidden; cursor:pointer; transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s ease; }
+#events .grid-item:hover { transform: translateY(-4px) scale(1.015); box-shadow: 0 18px 36px rgba(0, 0, 0, 0.55); }
+#events .grid-item img { width:100%; height:100%; object-fit:cover; display:block; transition: transform 0.55s ease, opacity 0.35s ease; }
+#events .grid-item:hover img { opacity:.35; transform: scale(1.04); }
+#events .grid-item .text { position:absolute; left:10px; bottom:10px; opacity:0; transition:.35s; }
+#events .grid-item:hover .text { opacity:1; }
+
+.modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.78); backdrop-filter:blur(10px); z-index:1200; justify-content:center; align-items:center; padding:20px; box-sizing:border-box; }
+.modal-content { width:60%; max-height:84vh; overflow:auto; background:rgba(20,0,0,.88); border:1px solid rgba(255,50,50,.7); padding:26px; box-sizing:border-box; }
+.event-article { display:flex; flex-direction:column; gap:14px; }
+.event-figure { position:relative; margin:0; }
+.event-figure img { width:100%; height:auto; display:block; }
+.event-source { position:absolute; right:10px; bottom:10px; background:rgba(0,0,0,.62); font-size:12px; padding:4px 8px; }
+.event-title { margin:0; font-size:30px; }
+.event-article p { margin:0; line-height:1.7; color:rgba(255,255,255,.9); }
+
+.story-modal { display:none; position:fixed; inset:0; z-index:1300; background:rgba(0,0,0,.84); justify-content:center; align-items:center; padding:20px; box-sizing:border-box; }
+.story-modal.is-open { display:flex; }
+.story-modal-inner { width:min(760px,100%); max-height:88vh; background:rgba(18,0,0,.95); border:1px solid rgba(255,80,80,.55); overflow:hidden; display:flex; flex-direction:column; position:relative; transform-origin: center center; }
+.story-modal-close { position:absolute; top:10px; right:12px; border:none; background:transparent; color:#fff; font-size:28px; cursor:pointer; }
+.story-modal-head { padding:24px 44px 12px 20px; border-bottom:1px solid rgba(255,255,255,.12); }
+.story-modal-head h2 { margin:0 0 12px; font-size:24px; }
+.story-lang-tabs { display:flex; gap:8px; }
+.story-lang-tab { border:1px solid rgba(255,255,255,.28); background:transparent; color:rgba(255,255,255,.74); padding:8px 16px; cursor:pointer; }
+.story-lang-tab.is-active { color:#fff; border-color:rgba(255,80,80,.8); background:rgba(170,0,0,.35); }
+.story-article-scroll { overflow:auto; padding:20px 24px 28px; }
+.story-panel { display:none; line-height:1.75; }
+.story-panel.is-active { display:block; }
+.story-ref-list { padding-left:1.3em; }
+
+#special-thanks.credits-section {
+  min-height: auto;
+  padding: clamp(96px, 12vh, 140px) clamp(32px, 6vw, 72px) clamp(72px, 10vh, 120px);
+  box-sizing: border-box;
+}
+#special-thanks .credits-inner {
+  max-width: 700px;
+  margin: 0;
+  text-align: left;
+  padding-left: clamp(1.25rem, 3.5vw, 2.75rem);
+  border-left: 1px solid rgba(255, 255, 255, 0.07);
+}
+#special-thanks .credits-block {
+  margin-bottom: clamp(3.5rem, 9vh, 5.5rem);
+}
+#special-thanks .credits-block:last-child {
+  margin-bottom: 0;
+}
+#special-thanks .credits-heading {
+  margin: 0 0 0.65rem;
+  font-size: clamp(1.35rem, 2.4vw, 1.65rem);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: rgba(255, 250, 246, 0.94);
+}
+#special-thanks .credits-heading-zh {
+  font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", "PingFang SC", serif;
+  font-weight: 600;
+}
+#special-thanks .credits-heading-en {
+  font-family: "Abril Fatface", Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: clamp(1.5rem, 2.8vw, 1.85rem);
+}
+#special-thanks .credits-rule {
+  height: 1px;
+  max-width: 100%;
+  margin: 0 0 clamp(1.75rem, 4vh, 2.5rem);
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.08) 72%, transparent);
+}
+#special-thanks .credits-rule-wide {
+  margin-bottom: clamp(2rem, 5vh, 2.75rem);
+}
+#special-thanks .credits-sources {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: "Cormorant Garamond", "Libre Baskerville", "Times New Roman", Times, serif;
+  font-size: clamp(1.05rem, 1.65vw, 1.22rem);
+  line-height: 1.85;
+  color: rgba(228, 218, 210, 0.82);
+}
+#special-thanks .credits-sources li {
+  margin: 0 0 1.15em;
+  padding: 0;
+}
+#special-thanks .credits-sources li:last-child {
+  margin-bottom: 0;
+}
+#special-thanks .credits-src-name {
+  display: inline-block;
+  min-width: 7.5em;
+  font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", "PingFang SC", serif;
+  color: rgba(255, 248, 242, 0.9);
+}
+#special-thanks .credits-sources a {
+  color: rgba(255, 200, 185, 0.78);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255, 120, 100, 0.22);
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+#special-thanks .credits-sources a:hover {
+  color: rgba(255, 230, 220, 0.95);
+  border-bottom-color: rgba(255, 140, 120, 0.55);
+}
+#special-thanks .credits-bib-intro {
+  margin: 0 0 1.25em;
+  font-family: "Cormorant Garamond", "Libre Baskerville", "Times New Roman", Times, serif;
+  font-size: clamp(0.95rem, 1.4vw, 1.05rem);
+  line-height: 1.6;
+  color: rgba(210, 200, 192, 0.65);
+  font-style: italic;
+}
+#special-thanks .credits-bibliography {
+  margin: 0;
+  padding-left: 1.35em;
+  font-family: "Cormorant Garamond", "Libre Baskerville", "Times New Roman", Times, serif;
+  font-size: clamp(0.98rem, 1.45vw, 1.12rem);
+  line-height: 1.72;
+  color: rgba(220, 208, 198, 0.78);
+}
+#special-thanks .credits-bibliography li {
+  margin: 0 0 0.95em;
+}
+#special-thanks .credits-bibliography cite {
+  font-style: italic;
+}
+#special-thanks .credits-bibliography a {
+  color: rgba(255, 190, 175, 0.75);
+  word-break: break-all;
+}
+#special-thanks .credits-special-text {
+  margin: 0;
+  max-width: 20em;
+  font-family: "Abril Fatface", Georgia, "Times New Roman", serif;
+  font-size: clamp(1.65rem, 3.6vw, 2.35rem);
+  font-weight: 400;
+  line-height: 1.28;
+  letter-spacing: 0.02em;
+  color: rgba(255, 248, 244, 0.95);
+}
+#special-thanks [data-credits-reveal] {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 1.15s cubic-bezier(0.22, 1, 0.36, 1), transform 1.15s cubic-bezier(0.22, 1, 0.36, 1);
+}
+#special-thanks.credits-in-view [data-credits-reveal] {
+  opacity: 1;
+  transform: translateY(0);
+}
+#special-thanks.credits-in-view [data-credits-reveal]:nth-child(1) { transition-delay: 0s; }
+#special-thanks.credits-in-view [data-credits-reveal]:nth-child(2) { transition-delay: 0.12s; }
+#special-thanks.credits-in-view [data-credits-reveal]:nth-child(3) { transition-delay: 0.24s; }
+@media (prefers-reduced-motion: reduce) {
+  #special-thanks [data-credits-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+#about.about-section {
+  min-height: min(100vh, 920px);
+  padding: clamp(100px, 14vh, 160px) clamp(32px, 6vw, 72px) clamp(100px, 12vh, 140px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  box-sizing: border-box;
+}
+#about .about-inner {
+  width: 100%;
+  max-width: 680px;
+  margin: 0;
+  text-align: left;
+  padding-left: clamp(1.25rem, 3.5vw, 2.75rem);
+  border-left: 1px solid rgba(255, 255, 255, 0.07);
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 1.35s cubic-bezier(0.22, 1, 0.36, 1), transform 1.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+#about.about-in-view .about-inner {
+  opacity: 1;
+  transform: translateY(0);
+}
+#about .about-title {
+  margin: 0 0 clamp(2.5rem, 6vh, 4.5rem);
+  font-family: "Abril Fatface", Georgia, "Times New Roman", serif;
+  font-size: clamp(3.75rem, 14vw, 9.5rem);
+  font-weight: 400;
+  line-height: 0.92;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: rgba(255, 248, 245, 0.96);
+}
+#about .about-body {
+  font-family: "Cormorant Garamond", "Libre Baskerville", "Times New Roman", Times, serif;
+  font-size: clamp(1.2rem, 1.85vw, 1.45rem);
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: 0.01em;
+  color: rgba(235, 225, 218, 0.78);
+}
+#about .about-body p {
+  margin: 0 0 1.65em;
+  max-width: 42em;
+}
+#about .about-body p:last-of-type {
+  margin-bottom: 0;
+}
+#about [lang="zh-CN"],
+#about .about-zh {
+  font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", "PingFang SC", serif;
+}
+#about .about-contact-block {
+  margin-top: clamp(3rem, 8vh, 4.5rem);
+  padding-top: clamp(2rem, 5vh, 2.75rem);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+#about .about-contact-label {
+  margin: 0 0 1.25rem;
+  font-family: "Cormorant Garamond", "Libre Baskerville", "Times New Roman", Times, serif;
+  font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: rgba(210, 198, 190, 0.62);
+}
+#about .about-email-row {
+  margin: 0;
+  font-family: "Cormorant Garamond", "Libre Baskerville", "Times New Roman", Times, serif;
+  font-size: clamp(1.35rem, 2.4vw, 1.85rem);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: rgba(255, 242, 235, 0.92);
+}
+#about .about-email-label {
+  display: block;
+  margin-bottom: 0.35em;
+  font-size: 0.55em;
+  font-weight: 400;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(200, 185, 175, 0.45);
+}
+#about .about-email {
+  position: relative;
+  display: inline-block;
+  color: rgba(255, 230, 220, 0.95);
+  text-decoration: none;
+  padding-bottom: 0.08em;
+  transition: color 0.35s ease;
+}
+#about .about-email::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 120, 100, 0.55);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+#about .about-email:hover {
+  color: #fff;
+}
+#about .about-email:hover::after,
+#about .about-email:focus-visible::after {
+  transform: scaleX(1);
+}
+#about .about-email:focus-visible {
+  outline: 1px solid rgba(255, 100, 90, 0.5);
+  outline-offset: 4px;
+}
+@media (prefers-reduced-motion: reduce) {
+  #about .about-inner {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  #about .about-email::after {
+    transition: none;
+    transform: scaleX(1);
+    opacity: 0.5;
+  }
+}
+
+#siteLangToggle { position:fixed; right:20px; bottom:20px; z-index:1400; border:1px solid rgba(255,80,80,.85); background:rgba(170,0,0,.9); color:#fff; padding:10px 14px; font-size:13px; cursor:pointer; }
+@media (max-width:900px){
+  #cover {
+    grid-template-columns: 1fr;
+    padding-top: 96px;
+    min-height: auto;
+  }
+  #cover > div:last-of-type { min-height: min(52vh, 420px); max-height: none; }
+  #cover img { min-height: 220px; flex: 1 1 52vh; }
+  .modal-content{width:min(92vw,740px);}
+}
+@media (max-width:640px){
+  #stories .story-cards { grid-template-columns: 1fr; gap: 22px; }
+  #stories .stories-head { margin-bottom: 2rem; }
+  #special-thanks.credits-section {
+    padding-left: clamp(20px, 5vw, 32px);
+    padding-right: clamp(20px, 5vw, 32px);
+  }
+  #about.about-section {
+    padding-left: clamp(20px, 5vw, 32px);
+    padding-right: clamp(20px, 5vw, 32px);
+  }
+}
+@media (max-width:520px){
+  #events .grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<nav>
+  <div><b>contemporarychina-historyarchive</b></div>
+  <div class="menu">
+    <a href="#timeline">Timeline</a>
+    <a href="#stories">Story Boards</a>
+    <a href="#events">Events</a>
+    <a href="#special-thanks">Credits</a>
+    <a href="#about">About</a>
+  </div>
+</nav>
+
+<div id="coverLoader" class="cover-loader" role="status" aria-live="polite" aria-busy="true">
+  <div class="cover-loader-back" aria-hidden="true"></div>
+  <div class="cover-loader-grain" aria-hidden="true"></div>
+  <p class="cover-loader-label">loading...</p>
+</div>
+
+<section id="cover">
+  <div>
+    <div class="title-cn">近代中国的家与国</div>
+    <div class="title-en">Family, Memory, and Social Change in Contemporary China</div>
+  </div>
+  <div>
+    <img src="images/cover.png" alt="Historical cover image" />
+    <p class="cover-image-credit">Photograph provided by Shen Feidi; photographed by Hu Zurui.</p>
+  </div>
+</section>
+
+<section id="timeline">
+  <div class="timeline-intro">
+    <div class="timeline-heading-stack">
+      <h1 class="timeline-title">Timeline</h1>
+      <div class="timeline-sub">1949–2000</div>
+    </div>
+  </div>
+  <div class="timeline-gallery" id="timelineGallery" aria-label="Timeline gallery 1949–2000">
+    <div class="timeline-gallery-track"></div>
+  </div>
+</section>
+
+<section id="stories">
+  <div class="stories-head">
+    <h1 class="stories-section-title">Story Boards</h1>
+    <div class="stories-section-rule" aria-hidden="true"></div>
+  </div>
+  <div class="story-cards">
+    <article class="story-card" data-story="1" tabindex="0" role="button">
+      <div class="story-thumb"><img src="assets/461777127929_.pic_hd-a6b6e311-30c5-4965-bc94-ddc4612d5058.png" alt=""></div>
+      <div class="story-meta">
+        <h3 class="story-title" data-en="No. 12 Changyu New Street: Economic Transition in the 1980s" data-zh="长裕新街12号门牌：80年代的经济转型">No. 12 Changyu New Street: Economic Transition in the 1980s</h3>
+        <p class="story-sub" data-en="Interviewee: KC (Mr. Chen)" data-zh="受访者：KC（陈先生）">Interviewee: KC (Mr. Chen)</p>
+      </div>
+    </article>
+    <article class="story-card" data-story="2" tabindex="0" role="button">
+      <div class="story-thumb"><img src="assets/421777119138_.pic_hd-6d5b0dd6-726b-4d3d-a7da-8bf7918e2de5.png" data-hover-src="assets/431777119140_.pic_hd-0bade716-e378-49f8-b142-0bcb4fc59468.png" alt=""></div>
+      <div class="story-meta">
+        <h3 class="story-title" data-en="Embroidered Shoe Insoles: From the Mountains to Xinjiang" data-zh="舵绣鞋垫：从大山到新疆">Embroidered Shoe Insoles: From the Mountains to Xinjiang</h3>
+        <p class="story-sub" data-en="Interviewee: Flora (Ms. Li)" data-zh="受访者：Flora（李女士）">Interviewee: Flora (Ms. Li)</p>
+      </div>
+    </article>
+    <article class="story-card" data-story="3" tabindex="0" role="button">
+      <div class="story-thumb"><img src="assets/__2026-04-23_22.07.13-7670e4c4-0b06-421a-bf23-1b9c351ff148.png" alt=""></div>
+      <div class="story-meta">
+        <h3 class="story-title" data-en="Photography Teaching Notes: The Development of Urban Construction" data-zh="摄影教案：城建的发展">Photography Teaching Notes: The Development of Urban Construction</h3>
+        <p class="story-sub" data-en="Interviewee: Shen Feidi" data-zh="受访者：沈飞地">Interviewee: Shen Feidi</p>
+      </div>
+    </article>
+    <article class="story-card" data-story="4" tabindex="0" role="button">
+      <div class="story-thumb"><img src="assets/411777119136_.pic_hd-730faedf-9c1c-49ce-a8e8-c43b1b08a8db.png" alt="削皮刀 Vegetable peeler"></div>
+      <div class="story-meta">
+        <h3 class="story-title" data-en="Vegetable Peeler: Reform and Opening-Up and the Stabilization of Urban Life" data-zh="削皮刀：改革开放与城市的稳定发展">Vegetable Peeler: Reform and Opening-Up and the Stabilization of Urban Life</h3>
+        <p class="story-sub" data-en="Interviewee: Ms. Li (Zoe)" data-zh="受访者：李女士（Zoe）">Interviewee: Ms. Li (Zoe)</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section id="events">
+  <h1 class="section-heading">Events</h1>
+  <div class="grid">
+    <div class="grid-item" data-event="1"><img src="assets/__2026-05-11_22.04.37-729a6b7d-9453-4cfb-bafe-258beb10a4e2.png" alt=""><div class="text" data-en="May Fourth Movement" data-zh="五四运动">May Fourth Movement</div></div>
+    <div class="grid-item" data-event="2"><img src="assets/__2026-05-07_11.17.47-df1fd781-a126-4a2e-87bf-efac75b993ec.png"><div class="text" data-en="War of Resistance Against Japan" data-zh="抗日战争">War of Resistance Against Japan</div></div>
+    <div class="grid-item" data-event="3"><img src="assets/__2026-05-07_10.51.07-68928bd9-99a3-49e1-b4e5-b1181a4b5675.png"><div class="text" data-en="Construction of Xinjiang" data-zh="建设新疆">Construction of Xinjiang</div></div>
+    <div class="grid-item" data-event="4"><img src="assets/__2026-05-11_22.06.10-e35cfc8c-7492-46cc-b1a8-0688bc8a951a.png" alt=""><div class="text" data-en="Great Leap Forward" data-zh="大跃进运动">Great Leap Forward</div></div>
+    <div class="grid-item" data-event="5"><img src="assets/__2026-05-11_22.05.08-b6087fa7-a256-4d12-9b87-65a868c20b50.png" alt=""><div class="text" data-en="Sino-Indian Border War" data-zh="中印边境战争">Sino-Indian Border War</div></div>
+    <div class="grid-item" data-event="6"><img src="assets/__2026-05-11_22.05.50-37311507-8361-4902-b48b-9f522292de95.png" alt=""><div class="text" data-en="Sent-Down Youth Movement" data-zh="知识青年上山下乡运动">知识青年上山下乡运动</div></div>
+    <div class="grid-item" data-event="7"><img src="assets/__2026-05-11_22.05.32-ed3dce8a-0589-45e4-b827-972bab812209.png" alt=""><div class="text" data-en="Zhenbao Island Incident" data-zh="珍宝岛事件">Zhenbao Island Incident</div></div>
+    <div class="grid-item" data-event="8"><img src="assets/__2026-05-11_21.38.13-b86507e3-ad6e-4873-bf64-b3cbfa3a857f.png" alt=""><div class="text" data-en="Reform and Opening-Up" data-zh="改革开放">Reform and Opening-Up</div></div>
+    <div class="grid-item" data-event="9"><img src="assets/__2026-05-11_21.59.05-12bc257a-9e58-4295-be77-b5b56626ad8f.png" alt=""><div class="text" data-en="Hong Kong Handover" data-zh="香港回归">Hong Kong Handover</div></div>
+  </div>
+</section>
+
+<section id="special-thanks" class="credits-section" aria-labelledby="credits-image-sources-heading">
+  <div class="credits-inner">
+    <div class="credits-block" data-credits-reveal>
+      <h2 id="credits-image-sources-heading" class="credits-heading credits-heading-zh">图片来源</h2>
+      <div class="credits-rule" aria-hidden="true"></div>
+      <ul class="credits-sources">
+        <li><span class="credits-src-name">新华社</span> <a href="https://www.xinhuanet.com" target="_blank" rel="noopener noreferrer">https://www.xinhuanet.com</a></li>
+        <li><span class="credits-src-name">BBC News</span> <a href="https://www.bbc.com/news" target="_blank" rel="noopener noreferrer">https://www.bbc.com/news</a></li>
+        <li><span class="credits-src-name">The New York Times</span> <a href="https://www.nytimes.com" target="_blank" rel="noopener noreferrer">https://www.nytimes.com</a></li>
+        <li><span class="credits-src-name">中国日报网</span> <a href="https://www.chinadaily.com.cn" target="_blank" rel="noopener noreferrer">https://www.chinadaily.com.cn</a></li>
+        <li><span class="credits-src-name">Library of Congress</span> <a href="https://www.loc.gov" target="_blank" rel="noopener noreferrer">https://www.loc.gov</a></li>
+      </ul>
+    </div>
+    <div class="credits-block" data-credits-reveal>
+      <h2 class="credits-heading credits-heading-en">Bibliography</h2>
+      <div class="credits-rule" aria-hidden="true"></div>
+      <p class="credits-bib-intro">Compiled from Story Boards endnotes (Chicago-style references).</p>
+      <ol class="credits-bibliography">
+        <li>Amy Auerbacher Wilson, Sidney Leonard Greenblatt, and Richard Whittingham Wilson, eds., <cite>Deviance and Social Control in Chinese Society</cite> (New York: Praeger, 1977).</li>
+        <li>Michael R. Dutton, <cite>Policing and Punishment in China: From Patriarchy to “the People”</cite> (Cambridge: Cambridge University Press, 1992).</li>
+        <li>Chen Jinyong, “China’s Hukou System Reform and Rural-Urban Migration,” unpublished manuscript / course reading.</li>
+        <li>Karl Marx and Friedrich Engels, <cite>The Communist Manifesto</cite> (1848), chap. 2, “Proletarians and Communists.”</li>
+        <li>Li Hanlin, “变迁中的中国单位制度：回顾中的思考,” <cite>社会学研究</cite>, no. 4 (1993).</li>
+        <li>Qu Jingdong and Fu Chunhui, “单位制与师徒制——总体体制下企业组织的微观治理机制,” <cite>社会学研究</cite>, n.d., 4.</li>
+        <li>Agnieszka Joniak-Luthi, “Han Migration to Xinjiang Uyghur Autonomous Region,” <cite>Zeitschrift fur Ethnologie</cite> 138, no. 2 (2013): 155–174.</li>
+        <li>新疆生产建设兵团史志编写组, <cite>新疆生产建设兵团发展史</cite> (Urumqi: Xinjiang People’s Publishing House, 2011).</li>
+        <li>Haiqun Li and Shiping Cui, “On the Historical Role of Han Migration to Xinjiang after 1949,” <cite>Journal Name</cite>, no. Issue (Year): 39.</li>
+        <li>China National Petroleum Corporation, “Karamay No. 1 Well: The Birth of New China’s First Major Oilfield,” October 28, 2025, <a href="https://news.cnpc.com.cn/system/2025/10/28/030176936.shtml" target="_blank" rel="noopener noreferrer">https://news.cnpc.com.cn/system/2025/10/28/030176936.shtml</a>.</li>
+        <li><cite>中国油气田开发志·新疆油气区卷</cite> (Beijing: Petroleum Industry Press, 2012).</li>
+        <li>Luohu District People’s Government of Shenzhen Municipality, “Archival Story 4: The Historical Development of the Archival Cause,” Luohu District Government Portal, accessed May 2, 2026, <a href="https://www.szlh.gov.cn/zwfw/qgwh/daq/dazx/content/post_10665908.html" target="_blank" rel="noopener noreferrer">https://www.szlh.gov.cn/zwfw/qgwh/daq/dazx/content/post_10665908.html</a>.</li>
+        <li>Interview with Shen Feidi; oral-history material relayed from the interviewee’s maternal grandfather (author notes).</li>
+        <li>BBC News 中文, “中国改革开放40年：从贫困到全球第二大经济体,” accessed May 8, 2026, <a href="https://www.bbc.com/zhongwen/simp/chinese-news-46512070" target="_blank" rel="noopener noreferrer">https://www.bbc.com/zhongwen/simp/chinese-news-46512070</a>.</li>
+        <li>Yue-man Yeung, “China’s Openness and Reform at 30: Retrospect and Prospect,” <cite>China Review</cite> 9, no. 2 (Fall 2009): 157–167.</li>
+        <li>International Monetary Fund (IMF), <cite>World Economic Outlook Database</cite>, April 2009.</li>
+      </ol>
+    </div>
+    <div class="credits-block credits-thanks" data-credits-reveal>
+      <div class="credits-rule credits-rule-wide" aria-hidden="true"></div>
+      <p class="credits-special-text">Special Thanks to all interview participants for sharing their stories</p>
+    </div>
+  </div>
+</section>
+
+<section id="about" class="about-section" aria-labelledby="about-heading">
+  <div class="about-inner">
+    <h1 id="about-heading" class="about-title">About</h1>
+    <div class="about-body">
+      <p>If this project reminds you of your own family stories, experiences, or memories, I would love to hear from you.</p>
+      <div class="about-contact-block">
+        <p class="about-contact-label">For collaborations, feedback, or story submissions:</p>
+        <p class="about-email-row">
+          <span class="about-email-label">Email</span>
+          <a href="mailto:amyhukeyu@gmail.com" class="about-email">amyhukeyu@gmail.com</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="modal" id="modal"><div class="modal-content"><p>Placeholder description shown after you click an event.</p></div></div>
+
+<div class="story-modal" id="storyModal" aria-hidden="true">
+  <div class="story-modal-inner" role="dialog" aria-modal="true" aria-labelledby="storyModalTitle">
+    <button type="button" class="story-modal-close" id="storyModalClose" aria-label="Close">&times;</button>
+    <div class="story-modal-head">
+      <h2 id="storyModalTitle"></h2>
+      <div class="story-lang-tabs" role="tablist">
+        <button type="button" class="story-lang-tab" role="tab" data-lang="cn">Chinese</button>
+        <button type="button" class="story-lang-tab is-active" role="tab" data-lang="en">English Version</button>
+      </div>
+    </div>
+    <div class="story-article-scroll">
+      <div class="story-panel" id="storyPanelCn" data-lang="cn"></div>
+      <div class="story-panel is-active" id="storyPanelEn" data-lang="en"></div>
+    </div>
+  </div>
+</div>
+
+<button type="button" id="siteLangToggle" onclick="toggleSiteLanguage()">EN / 中文</button>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script>
+var currentSiteLang = "en";
+var eventModal = document.getElementById("modal");
+var eventModalContent = eventModal.querySelector(".modal-content");
+var siteLangToggleBtn = document.getElementById("siteLangToggle");
+var activeEventId = null;
+
+var timelineGalleryYears = [
+  { year: 1949, src: "images/timeline/1949.png", bullets: [
+    { en: "Founding of the People’s Republic of China (October 1).", zh: "中华人民共和国成立（10月1日）" },
+    { en: "Mao Zedong leads the Chinese Communist Party as the ruling core.", zh: "毛泽东领导中国共产党成为执政核心" },
+    { en: "Chiang Kai-shek withdraws to Taiwan in December.", zh: "蒋介石于12月退守台湾" },
+    { en: "Cross-strait division takes shape.", zh: "两岸分治格局形成" }
+  ]},
+  { year: 1950, src: "images/timeline/1950.png", bullets: [
+    { en: "The War to Resist U.S. Aggression and Aid Korea begins.", zh: "抗美援朝战争开始" },
+    { en: "The land reform campaign is rolled out nationwide.", zh: "土地改革运动全面推进" },
+    { en: "The Marriage Law of the PRC is promulgated.", zh: "中华人民共和国婚姻法颁布" }
+  ]},
+  { year: 1951, src: "images/timeline/1951.png", bullets: [
+    { en: "Peaceful liberation of Tibet (Seventeen-Point Agreement signed).", zh: "西藏和平解放（签署《十七条协议》）" },
+    { en: "The Campaign to Suppress Counterrevolutionaries continues.", zh: "镇压反革命运动持续推进" },
+    { en: "The Three-Anti and Five-Anti campaigns begin (from late 1951).", zh: "三反五反运动（1951年底开始）" }
+  ]},
+  { year: 1952, src: "images/timeline/1952.png", bullets: [
+    { en: "Peaceful liberation of Tibet (Seventeen-Point Agreement signed).", zh: "西藏和平解放（签署《十七条协议》）" },
+    { en: "The Campaign to Suppress Counterrevolutionaries continues.", zh: "镇压反革命运动持续推进" },
+    { en: "The Three-Anti and Five-Anti campaigns begin (from late 1951).", zh: "三反五反运动（1951年底开始）" }
+  ]},
+  { year: 1954, src: "images/timeline/1954.png", bullets: [
+    { en: "The Constitution of the PRC is promulgated.", zh: "中华人民共和国宪法颁布" },
+    { en: "The First National People’s Congress convenes.", zh: "第一届全国人民代表大会召开" }
+  ]},
+  { year: 1955, src: "images/timeline/1955.png", bullets: [
+    { en: "Agricultural collectivization accelerates.", zh: "农业合作化运动加速推进" },
+    { en: "Land is gradually transferred to collective ownership.", zh: "土地逐步转为集体所有" }
+  ]},
+  { year: 1956, src: "images/timeline/1956.png", bullets: [
+    { en: "Socialist transformation is largely completed.", zh: "社会主义改造基本完成" },
+    { en: "Public ownership becomes dominant.", zh: "公有制成为主体" },
+    { en: "Private ownership largely exits the economy.", zh: "私有制基本退出" }
+  ]},
+  { year: 1957, src: "images/timeline/1957.png", bullets: [
+    { en: "The Anti-Rightist Campaign is launched.", zh: "反右运动开展" },
+    { en: "Intellectuals and cadres come under tightening scrutiny.", zh: "知识分子与干部群体受到整顿" }
+  ]},
+  { year: 1959, src: "images/timeline/1959.png", bullets: [
+    { en: "The Lushan Conference is held.", zh: "庐山会议召开" },
+    { en: "Issues related to the Great Leap Forward are debated.", zh: "对“大跃进”相关问题展开讨论" }
+  ]},
+  { year: 1960, src: "images/timeline/1960.png", bullets: [
+    { en: "The national economy faces severe difficulties.", zh: "国民经济出现困难" },
+    { en: "Sino-Soviet relations worsen; the Sino-Soviet split deepens.", zh: "中苏关系恶化，中苏分裂加剧" }
+  ]},
+  { year: 1961, src: "images/timeline/1961.png", bullets: [
+    { en: "The “adjust, consolidate, enrich, and raise” policy is introduced.", zh: "提出“调整、巩固、充实、提高”方针" },
+    { en: "Small household plots are restored in many areas.", zh: "多地恢复农民少量自留地" }
+  ]},
+  { year: 1962, src: "images/timeline/1962.png", bullets: [
+    { en: "The Seven Thousand Cadres Conference is held.", zh: "七千人大会召开" },
+    { en: "The Sino-Indian border war breaks out.", zh: "中印边境战争爆发" }
+  ]},
+  { year: 1963, src: "images/timeline/1963.png", bullets: [
+    { en: "The Four Cleanups campaign unfolds (politics, economy, organization, ideology).", zh: "“四清运动”展开（清政治、清经济、清组织、清思想）" }
+  ]},
+  { year: 1964, src: "images/timeline/1964.png", bullets: [
+    { en: "China successfully tests its first atomic bomb.", zh: "中国第一颗原子弹爆炸成功" }
+  ]},
+  { year: 1965, src: "images/timeline/1965.png", bullets: [
+    { en: "Criticism in cultural spheres intensifies.", zh: "文化领域批判活动增加" },
+    { en: "Ideological struggle gradually sharpens.", zh: "意识形态斗争逐渐加强" }
+  ]},
+  { year: 1966, src: "images/timeline/1966.png", bullets: [
+    { en: "The Cultural Revolution begins.", zh: "“文化大革命”开始" },
+    { en: "Schools suspend classes; the Red Guard movement rises.", zh: "学校停课，红卫兵运动兴起" }
+  ]},
+  { year: 1967, src: "images/timeline/1967.png", bullets: [
+    { en: "Power seizures spread across the country.", zh: "“夺权运动”在全国展开" },
+    { en: "Governments are disrupted; Revolutionary Committees emerge.", zh: "各地原有政府机构被冲击，新的“革命委员会”逐步建立" },
+    { en: "Education and production stall in some regions.", zh: "教育、生产活动在部分地区中断" }
+  ]},
+  { year: 1968, src: "images/timeline/1968.png", bullets: [
+    { en: "The PLA plays a wider role in local administration.", zh: "军队更广泛介入地方管理" },
+    { en: "The Up to the Mountains movement expands.", zh: "上山下乡运动大规模展开" }
+  ]},
+  { year: 1969, src: "images/timeline/1969.png", bullets: [
+    { en: "Sino-Soviet border clashes (Zhenbao Island).", zh: "中苏边境冲突（珍宝岛事件）" }
+  ]},
+  { year: 1970, src: "images/timeline/1970.png", bullets: [
+    { en: "The Cultural Revolution framework continues.", zh: "延续文化大革命框架" },
+    { en: "The education system remains not fully normalized.", zh: "教育体系尚未完全正常化" }
+  ]},
+  { year: 1971, src: "images/timeline/1971.png", bullets: [
+    { en: "The Lin Biao incident.", zh: "林彪事件" },
+    { en: "China regains its seat at the United Nations.", zh: "中国恢复联合国合法席位" }
+  ]},
+  { year: 1972, src: "images/timeline/1972.png", bullets: [
+    { en: "U.S. President Nixon visits China.", zh: "尼克松访华" }
+  ]},
+  { year: 1973, src: "images/timeline/1973.png", bullets: [
+    { en: "The 10th National Congress of the CCP is held.", zh: "中共十大召开" },
+    { en: "Political structures remain within the Cultural Revolution framework.", zh: "政治结构延续文化大革命框架" }
+  ]},
+  { year: 1974, src: "images/timeline/1974.png", bullets: [
+    { en: "The Criticize Lin, Criticize Confucius campaign is launched.", zh: "“批林批孔”运动展开" }
+  ]},
+  { year: 1975, src: "images/timeline/1975.png", bullets: [
+    { en: "Deng Xiaoping returns to work and pushes policy adjustments.", zh: "邓小平复出并推动工作" }
+  ]},
+  { year: 1976, src: "images/timeline/1976.png", bullets: [
+    { en: "Zhou Enlai dies.", zh: "周恩来逝世" },
+    { en: "The Tangshan earthquake strikes.", zh: "唐山大地震发生" },
+    { en: "Mao Zedong dies.", zh: "毛泽东逝世" },
+    { en: "The Gang of Four is arrested; the Cultural Revolution ends.", zh: "粉碎“四人帮”，文化大革命结束" }
+  ]},
+  { year: 1977, src: "images/timeline/1977.png", bullets: [
+    { en: "The gaokao (national college entrance exam) is restored.", zh: "恢复高考" },
+    { en: "Sent-down youth begin returning to cities in larger numbers.", zh: "上山下乡青年陆续返城" }
+  ]},
+  { year: 1978, src: "images/timeline/1978.png", bullets: [
+    { en: "Reform and opening up begins.", zh: "改革开放启动" },
+    { en: "The Third Plenum shifts the focus to economic construction.", zh: "十一届三中全会召开，工作重心转向经济建设" }
+  ]},
+  { year: 1979, src: "images/timeline/1979.png", bullets: [
+    { en: "China and the United States establish diplomatic relations.", zh: "中美正式建交" },
+    { en: "Border conflict with Vietnam (self-defensive counterattack).", zh: "对越自卫反击战" },
+    { en: "The household responsibility system begins in the countryside.", zh: "农村家庭联产承包责任制开始推行" }
+  ]},
+  { year: 1980, src: "images/timeline/1980.png", bullets: [
+    { en: "Special economic zones are created (Shenzhen, Zhuhai, Shantou, Xiamen).", zh: "设立经济特区（深圳、珠海、汕头、厦门）" },
+    { en: "Opening-up to the outside world expands.", zh: "对外开放进一步扩大" }
+  ]},
+  { year: 1982, src: "images/timeline/1982.png", bullets: [
+    { en: "The PRC Constitution is promulgated (basis of the current constitution).", zh: "中华人民共和国宪法颁布（现行宪法基础）" }
+  ]},
+  { year: 1984, src: "images/timeline/1984.png", bullets: [
+    { en: "Fourteen coastal cities are opened further.", zh: "开放14个沿海城市" },
+    { en: "Urban economic restructuring begins.", zh: "城市经济体制改革启动" }
+  ]},
+  { year: 1986, src: "images/timeline/1986.png", bullets: [
+    { en: "The 863 Program for high technology is launched.", zh: "提出“863计划”（高技术发展计划）" }
+  ]},
+  { year: 1987, src: "images/timeline/1987.png", bullets: [
+    { en: "The 13th National Congress of the CCP is held.", zh: "中共十三大召开" },
+    { en: "The theory of the “primary stage of socialism” is articulated.", zh: "提出“社会主义初级阶段”理论" }
+  ]},
+  { year: 1989, src: "images/timeline/1989.png", bullets: [
+    { en: "The June Fourth incident.", zh: "六四事件" }
+  ]},
+  { year: 1990, src: "images/timeline/1990.png", bullets: [
+    { en: "Pudong, Shanghai, is opened for development.", zh: "上海浦东开发开放" },
+    { en: "The Shanghai Stock Exchange is founded.", zh: "上海证券交易所成立" }
+  ]},
+  { year: 1992, src: "images/timeline/1992.png", bullets: [
+    { en: "Deng Xiaoping’s Southern Tour.", zh: "邓小平南方谈话" },
+    { en: "The socialist market economy is affirmed as the direction of reform.", zh: "社会主义市场经济方向确立" }
+  ]},
+  { year: 1993, src: "images/timeline/1993.png", bullets: [
+    { en: "The socialist market economy is written into the Constitution.", zh: "社会主义市场经济写入宪法" }
+  ]},
+  { year: 1997, src: "images/timeline/1997.png", bullets: [
+    { en: "Hong Kong returns to China.", zh: "香港回归" },
+    { en: "Deng Xiaoping dies.", zh: "邓小平逝世" }
+  ]},
+  { year: 1998, src: "images/timeline/1998.png", bullets: [
+    { en: "Catastrophic flooding along the Yangtze River basin.", zh: "长江流域特大洪水" }
+  ]},
+  { year: 1999, src: "images/timeline/1999.png", bullets: [
+    { en: "Macao returns to China.", zh: "澳门回归" },
+    { en: "Constitutional amendments clarify the status of the non-public sector.", zh: "宪法修正案通过（明确非公有制经济地位）" }
+  ]},
+  { year: 2000, src: "images/timeline/2000.png", bullets: [
+    { en: "Western Development Strategy launched.", zh: "西部大开发战略启动" },
+    { en: "Infrastructure and growth promoted in central and western regions.", zh: "推动中西部地区基础设施建设与经济发展" }
+  ]}
+];
+
+function defaultTimelineBullets(year) {
+  return [{
+    en: "Archival photograph from the History Archive collection (" + year + ").",
+    zh: "历史档案馆馆藏影像（" + year + "年）。"
+  }];
+}
+
+function renderTimelineGallery() {
+  var root = document.getElementById("timelineGallery");
+  if (!root) return;
+  var track = root.querySelector(".timeline-gallery-track");
+  if (!track) {
+    track = document.createElement("div");
+    track.className = "timeline-gallery-track";
+    root.appendChild(track);
+  }
+  track.innerHTML = "";
+  timelineGalleryYears.forEach(function (entry) {
+    var bullets = entry.bullets && entry.bullets.length ? entry.bullets : defaultTimelineBullets(entry.year);
+    var item = document.createElement("div");
+    item.className = "timeline-item";
+    var img = document.createElement("img");
+    img.src = entry.src;
+    img.alt = String(entry.year);
+    img.loading = "lazy";
+    var cap = document.createElement("div");
+    cap.className = "caption";
+    var h = document.createElement("h3");
+    h.textContent = String(entry.year);
+    var desc = document.createElement("div");
+    desc.className = "timeline-desc";
+    var ul = document.createElement("ul");
+    bullets.forEach(function (b) {
+      var li = document.createElement("li");
+      li.setAttribute("data-en", b.en);
+      li.setAttribute("data-zh", b.zh);
+      li.textContent = b.en;
+      ul.appendChild(li);
+    });
+    desc.appendChild(ul);
+    cap.appendChild(h);
+    cap.appendChild(desc);
+    item.appendChild(img);
+    item.appendChild(cap);
+    track.appendChild(item);
+  });
+}
+
+renderTimelineGallery();
+
+var eventArticles = {
+  1: {
+    htmlCn: `<article class="event-article"><figure class="event-figure"><img src="assets/__2026-05-11_22.04.37-729a6b7d-9453-4cfb-bafe-258beb10a4e2.png"><figcaption class="event-source">图片来源于网络</figcaption></figure><h2 class="event-title">五四运动</h2><p>五四运动发生于1919年，是中国近代史上一场具有广泛影响的社会与思想运动。其直接起因是第一次世界大战后召开的巴黎和会决定，将原属德国在中国山东的权益转交日本，引发中国社会强烈不满。5月4日，北京学生在天安门前集会示威，反对这一决定，并批评当时政府在外交中的立场。</p><p>运动很快由北京扩展至全国。各地学生罢课，上海等地工人罢工、商人罢市，形成跨阶层的社会动员。6月的上海大罢工进一步扩大了影响，使运动从学生主导的抗议发展为全国性的群众行动。在持续压力下，政府释放被捕学生、撤换相关官员，并最终拒绝在《凡尔赛条约》上签字。</p></article>`,
+    htmlEn: `<article class="event-article"><figure class="event-figure"><img src="assets/__2026-05-11_22.04.37-729a6b7d-9453-4cfb-bafe-258beb10a4e2.png"><figcaption class="event-source">Image source: Web</figcaption></figure><h2 class="event-title">May Fourth Movement</h2><p>The May Fourth Movement took place in 1919 and became a social and intellectual movement with far-reaching influence in modern Chinese history. Its immediate trigger was the Paris Peace Conference after World War I, which decided to transfer Germany’s former rights in Shandong to Japan, provoking widespread anger in China. On May 4, students in Beijing gathered and demonstrated near Tiananmen, opposing the decision and criticizing the government’s diplomatic stance.</p><p>The movement quickly spread nationwide. Students struck classes in many cities, while workers in Shanghai and elsewhere launched strikes and merchants closed shops, forming broad cross-class mobilization. The June general strike in Shanghai further escalated the movement, transforming it from student-led protest into a nationwide mass action. Under continued pressure, the government released arrested students, dismissed relevant officials, and ultimately refused to sign the Treaty of Versailles.</p></article>`
+  },
+  2: {
+    htmlCn: `<article class="event-article"><figure class="event-figure"><img src="assets/__2026-05-07_11.17.47-df1fd781-a126-4a2e-87bf-efac75b993ec.png"><figcaption class="event-source">图片来自于新华社</figcaption></figure><h2 class="event-title">抗日战争</h2><p>抗日战争（1931—1945年）是中国为抵抗日本帝国主义侵略而进行的一场全国性民族解放战争，也是第二次世界大战在亚洲战场的重要组成部分。</p><p>战争通常以1931年的九一八事变为开端，日本占领中国东北；1937年卢沟桥事变后，全面抗战爆发。中国通过建立抗日民族统一战线，由国民政府领导正面战场、中国共产党发展敌后抗战，共同对抗侵略。1945年，日本在世界反法西斯战争中战败并宣布投降（日本投降），中国取得胜利。</p><p>在军事之外，抗日战争对中国社会产生了深远影响：在社会层面，战争造成巨大人员伤亡和人口流动，大量城市与乡村遭到破坏（如南京大屠杀），社会结构被打乱，同时也推动了民众的广泛动员，增强了民族认同感与凝聚力。在经济方面，工业基础遭受严重破坏，但同时也促成部分工业向内地转移（如“内迁工业”），推动了西南、西北地区的初步工业发展，为战后经济布局带来影响。在政治层面，抗战改变了中国的政治格局。各政治力量在战争中发展壮大，尤其是中国共产党在农村和敌后地区的影响力显著提升，为战后局势演变奠定基础。在文化与思想方面，抗战激发了强烈的爱国主义情绪，文学、艺术、教育等领域都围绕抗战展开，大众文化更加关注国家命运与普通人的生活经验。</p></article>`,
+    htmlEn: `<article class="event-article"><figure class="event-figure"><img src="assets/__2026-05-07_11.17.47-df1fd781-a126-4a2e-87bf-efac75b993ec.png"><figcaption class="event-source">Image source: Xinhua News Agency</figcaption></figure><h2 class="event-title">War of Resistance Against Japan</h2><p>The War of Resistance Against Japanese Aggression (1931-1945) was a nationwide war of national liberation fought by China against imperial Japanese invasion, and an important part of the Asian theater of World War II.</p><p>The war is usually traced to the Mukden Incident in 1931, after which Japan occupied Northeast China. Following the Marco Polo Bridge Incident in 1937, full-scale war broke out. Through the Anti-Japanese National United Front, the Nationalist government led the main front while the Chinese Communist Party developed resistance behind enemy lines. In 1945, Japan was defeated in the global anti-fascist war and announced surrender, and China achieved victory.</p><p>Beyond the battlefield, the war had profound social consequences in China. It caused immense casualties and population displacement, devastated many cities and villages (including the Nanjing Massacre), and disrupted social structure, while also promoting mass mobilization and strengthening national identity and cohesion.</p><p>Economically, industrial foundations were heavily damaged, but part of industry relocated inland, which also contributed to early industrial growth in Southwest and Northwest China and influenced postwar economic geography. Politically, the war reshaped China’s political landscape, and the CCP in particular greatly expanded its influence in rural and occupied areas, laying foundations for postwar developments. In culture and thought, the war fueled strong patriotism; literature, art, and education centered on national salvation and the lived experiences of ordinary people.</p></article>`
+  },
+  3: {
+    htmlCn: `<article class="event-article"><figure class="event-figure"><img src="assets/__2026-05-07_10.51.07-68928bd9-99a3-49e1-b4e5-b1181a4b5675.png"><figcaption class="event-source">图片来自于新华社</figcaption></figure><h2 class="event-title">建设新疆</h2><p>1949年新疆和平解放后，中央政府迅速建立地方政权体系，并在1955年设立新疆维吾尔自治区，实行民族区域自治制度。在1950年代初期，土地改革与社会改革相继展开，废除封建土地制度，调整农村生产关系，同时在牧区推行合作化，逐步改变传统游牧与农业生产方式。</p><p>1954年成立的新疆生产建设兵团成为这一时期最具特色的制度安排之一。兵团集经济生产、社会管理与边防功能于一体，通过大规模屯垦开发，将戈壁荒滩改造为农田，重点发展棉花、小麦等作物种植，并建立起一批以农垦为基础的新型城镇。这不仅推动了农业现代化，也在一定程度上重塑了新疆的人口与社会结构。</p><p>在工业与资源开发方面，1950—1970年代国家开始系统勘探新疆的石油、煤炭与有色金属资源。克拉玛依油田的开发（1955年后）标志着新疆现代能源工业的起步，并逐渐形成以石油、石化为核心的工业体系。同时，交通基础设施不断完善，如兰新铁路（1950年代开工，1962年全线通车）大大加强了新疆与内地的联系，改变了以往交通闭塞的状况。</p><p>改革开放以后（1978年后），新疆进入以市场化和对外开放为导向的发展阶段。国家加大对能源产业的投资，塔里木盆地油气资源的勘探与开发成为重点，同时推动轻工业和城市经济发展。乌鲁木齐等城市快速扩张，商业与消费文化逐渐兴起，城乡结构发生明显变化。</p></article>`,
+    htmlEn: `<article class="event-article"><figure class="event-figure"><img src="assets/__2026-05-07_10.51.07-68928bd9-99a3-49e1-b4e5-b1181a4b5675.png"><figcaption class="event-source">Image source: Xinhua News Agency</figcaption></figure><h2 class="event-title">Construction of Xinjiang</h2><p>After Xinjiang’s peaceful liberation in 1949, the central government rapidly established a local political-administrative system and set up the Xinjiang Uyghur Autonomous Region in 1955 under the framework of regional ethnic autonomy. In the early 1950s, land reform and broader social reforms were launched: feudal land relations were dismantled, rural production relations were adjusted, and cooperative transformation was promoted in pastoral areas, gradually changing traditional nomadic and agricultural production patterns.</p><p>Founded in 1954, the Xinjiang Production and Construction Corps became one of the most distinctive institutional arrangements of this period. Integrating economic production, social governance, and border defense functions, the Corps carried out large-scale land reclamation, converting Gobi wasteland into farmland, focusing on cotton and wheat, and building a number of new settlements based on agricultural reclamation. This not only advanced agricultural modernization, but also reshaped Xinjiang’s demographic and social structure to some extent.</p><p>In industry and resource development, from the 1950s to the 1970s the state began systematic exploration of Xinjiang’s petroleum, coal, and nonferrous metal resources. The development of the Karamay Oilfield (after 1955) marked the start of modern energy industry in Xinjiang and gradually formed an industrial system centered on oil and petrochemicals. Transport infrastructure also improved continuously: for example, the Lanzhou-Xinjiang Railway (started in the 1950s and fully opened in 1962) greatly strengthened links between Xinjiang and inland China, changing earlier conditions of transport isolation.</p><p>After reform and opening-up (post-1978), Xinjiang entered a development phase oriented toward marketization and external opening. State investment in the energy sector increased, with exploration and development in the Tarim Basin becoming a key focus, while light industry and urban economies were also promoted. Cities such as Urumqi expanded rapidly, commercial and consumer culture emerged, and urban-rural structure changed markedly.</p></article>`
+  },
+  4: {
+    htmlCn: `<article class="event-article"><figure class="event-figure"><img src="assets/__2026-05-11_22.06.10-e35cfc8c-7492-46cc-b1a8-0688bc8a951a.png"><figcaption class="event-source">图片来源于网络</figcaption></figure><h2 class="event-title">大跃进运动</h2><p>大跃进运动始于1958年，是中国在工业化进程中推动的一场大规模社会与经济动员。其核心目标是在短时间内大幅提高工业和农业产量，尤其强调“以钢为纲”，试图迅速提升国家工业实力。</p><p>在具体实践中，全国掀起了“全民大炼钢铁”的热潮。城市与农村普遍建立“土高炉”，许多由泥土和砖块临时砌成，分布在田间地头甚至居民院落。普通民众被广泛动员参与炼钢，一些地区甚至要求将家中的铁锅、农具等金属器具上交作为原料。然而，由于缺乏技术和设备，这些“土法炼钢”往往无法达到高温要求，最终炼出的多为无法使用的铁块或废料。</p><p>与此同时，农村普遍建立人民公社，并推行公共食堂制度。农民集中在食堂吃饭，一度出现“吃饭不要钱”的情况，强调集体化与平均分配。一些地方还对食堂的卫生与伙食进行评比，以鼓励生产积极性。但由于粮食分配缺乏有效计划，加之产量统计失真，这种制度很快难以维持，部分地区出现粮食紧张甚至食物短缺。</p><p>在农业方面，为完成高指标任务，各地普遍出现“高产竞赛”和“放卫星”（虚报产量）的现象。与此同时，大量劳动力被调离农业生产，投入炼钢和基础建设，导致农作物无人收割或管理不善，农业生产受到严重影响。此外，为获取燃料，大规模砍伐森林用于炼钢，也对生态环境造成破坏。</p><p>从结果来看，大跃进在短期内动员了大量人力，推动了一些基础设施建设，但也造成资源浪费、经济结构失衡以及农业减产等问题。到1960年前后，国家开始对政策进行调整，逐步恢复正常生产秩序。整体而言，大跃进运动反映了当时中国在探索快速工业化道路中的一次重要尝试，其经验与教训对后续发展产生了深远影响。</p></article>`,
+    htmlEn: `<article class="event-article"><figure class="event-figure"><img src="assets/__2026-05-11_22.06.10-e35cfc8c-7492-46cc-b1a8-0688bc8a951a.png"><figcaption class="event-source">Image source: Web archive</figcaption></figure><h2 class="event-title">Great Leap Forward</h2><p>The Great Leap Forward began in 1958 as a massive social and economic mobilization in China’s industrialization process. Its core goal was to sharply raise industrial and agricultural output in a short time, especially through the slogan of “taking steel as the key link,” in an effort to rapidly boost national industrial strength.</p><p>In practice, the country launched a nationwide campaign of “mass steelmaking.” Temporary backyard furnaces, often built from mud and bricks, appeared in cities and villages, including fields and residential courtyards. Ordinary people were widely mobilized to smelt steel, and in some places households were required to hand over iron utensils and farm tools as raw material. However, due to lack of technology and equipment, these methods often failed to reach required temperatures, producing mostly unusable iron lumps or scrap.</p><p>At the same time, people’s communes were established broadly in rural areas, and collective canteen systems were promoted. Farmers ate in communal dining halls, and in some places there was briefly a “free meals” atmosphere emphasizing collectivization and egalitarian distribution. But because grain allocation lacked effective planning, and output reporting was often distorted, the system soon became unsustainable, with food shortages in some regions.</p><p>In agriculture, to meet high targets many places engaged in “high-yield competitions” and “satellite launching” (inflated output reporting). Meanwhile, large amounts of labor were shifted out of farming into steelmaking and infrastructure projects, leaving crops underharvested or poorly managed and seriously harming agricultural production. In addition, large-scale deforestation for furnace fuel caused ecological damage.</p><p>In outcome, the Great Leap Forward mobilized huge labor resources and built some infrastructure in the short term, but also led to waste, structural imbalance, and agricultural decline. Around 1960, policy adjustments began and normal production order was gradually restored. Overall, the movement was a major attempt in China’s exploration of rapid industrialization, and its lessons had lasting impact on later development.</p></article>`
+  },
+  5: {
+    htmlCn: `<article class="event-article"><figure class="event-figure"><img src="assets/__2026-05-11_22.05.08-b6087fa7-a256-4d12-9b87-65a868c20b50.png"><figcaption class="event-source">图片来源于bbc</figcaption></figure><h2 class="event-title">中印边境战争</h2><p>中印边境战争发生于1962年，是中国与印度之间围绕边界划分问题爆发的一次武装冲突。19世纪末至20世纪初，英国在其殖民统治下的印度北部划定边界，其中1914年的“麦克马洪线”被英印方面作为中印东段边界依据，但这一划界未得到中国政府承认；在西段的阿克赛钦地区，历史上缺乏明确边界划分，双方对归属存在长期分歧。</p><p>20世纪50年代，中印两国在建交初期曾提出“和平共处五项原则”，关系一度较为友好。但随着边界问题逐渐显现，矛盾开始加深。1950年代后期，中国在新疆与西藏之间修建公路（经过阿克赛钦地区），印度对此提出异议；同时，1959年西藏局势变化后，达赖喇嘛进入印度，也对两国关系产生影响。此后，双方在边境地区多次发生小规模冲突，并逐步加强军事部署。</p><p>1962年10月，冲突全面爆发，中国军队在西段（阿克赛钦）和东段（现中印边界东段地区）同时展开军事行动。战事持续约一个月，中国方面在多个方向取得军事优势。1962年11月，中国宣布单方面停火，并在东段后撤至“实际控制线”以北地区，同时在西段保持原有控制范围。战争结束后，中印双方并未签署正式和平条约，边界问题仍未彻底解决。</p></article>`,
+    htmlEn: `<article class="event-article"><figure class="event-figure"><img src="assets/__2026-05-11_22.05.08-b6087fa7-a256-4d12-9b87-65a868c20b50.png"><figcaption class="event-source">Image source: BBC</figcaption></figure><h2 class="event-title">Sino-Indian Border War</h2><p>The Sino-Indian Border War took place in 1962 and was an armed conflict between China and India over boundary delimitation. In the late 19th and early 20th centuries, Britain drew boundaries in northern India under colonial rule. The 1914 “McMahon Line” was used by the British-Indian side as the basis for the eastern sector, but it was not recognized by the Chinese government. In the western sector, the Aksai Chin area lacked clear historical delimitation, and both sides maintained long-standing territorial claims.</p><p>In the 1950s, China and India initially maintained relatively friendly ties and advocated the Five Principles of Peaceful Coexistence. But as border disputes surfaced, tensions deepened. In the late 1950s, China built a road between Xinjiang and Tibet through Aksai Chin, which India opposed. Meanwhile, after changes in Tibet in 1959, the Dalai Lama entered India, further affecting bilateral relations. Border skirmishes became more frequent, and both sides reinforced military deployments.</p><p>In October 1962, full-scale fighting broke out. Chinese forces launched operations in both the western sector (Aksai Chin) and the eastern sector. The war lasted about one month, with China gaining military advantage in multiple directions. In November 1962, China announced a unilateral ceasefire and withdrew in the eastern sector to areas north of the line of actual control, while maintaining existing control in the western sector. No formal peace treaty was signed, and the boundary issue remained unresolved.</p></article>`
+  },
+  6: {
+    htmlCn: `<article class="event-article"><figure class="event-figure"><img src="assets/__2026-05-11_22.05.50-37311507-8361-4902-b48b-9f522292de95.png"><figcaption class="event-source">图片来源于中国新闻网</figcaption></figure><h2 class="event-title">知识青年上山下乡运动</h2><p>上山下乡运动是20世纪60年代末至70年代在中国推行的一项社会政策，主要指将城市知识青年（多为中学毕业生）动员或组织到农村、边疆及生产建设兵团，从事农业劳动与基层工作。1968年前后，这一政策在全国范围内大规模展开，其核心理念是让城市青年“接受再教育”，并在一定程度上缓解当时城市就业与教育体系的压力。</p><p>在实施过程中，大量知青被安排“插队落户”，长期生活在农村地区，参与集体生产劳动。不同地区的具体条件差异较大，但整体而言，生活环境较为艰苦，基础设施、医疗与教育资源相对匮乏。</p><p>从社会影响来看，这一政策产生了多方面的结果。一方面，它在一定程度上缓解了城市就业压力，促进了人口在城乡之间的流动，也使部分农村地区获得了来自城市的劳动力和知识资源。一些知青在农村积累了生产经验，对基层社会有了更直接的理解，这段经历也在后来的文学与文化表达中留下了重要印记。</p><p>另一方面，该运动也对一代人的教育与职业路径产生了显著影响。许多青年原有的升学机会被中断，长期滞留农村影响了其后续发展。城乡之间在资源和生活条件上的差异，使不少知青面临生活与心理上的压力。此外，政策在执行过程中具有较强的统一性与强制性，不同个体的选择空间有限。20世纪70年代后期，随着政策调整及1977年恢复高考，大批知青开始陆续返城。上山下乡运动由此逐渐结束。</p></article>`,
+    htmlEn: `<article class="event-article"><figure class="event-figure"><img src="assets/__2026-05-11_22.05.50-37311507-8361-4902-b48b-9f522292de95.png"><figcaption class="event-source">Image source: China News Service</figcaption></figure><h2 class="event-title">Sent-Down Youth Movement</h2><p>The Sent-Down Youth Movement was a social policy carried out in China from the late 1960s through the 1970s, in which urban educated youth (mostly middle-school graduates) were mobilized or organized to go to rural areas, border regions, and production-construction corps for agricultural labor and grassroots work. Around 1968, the policy expanded nationwide. Its core idea was that urban youth should “receive re-education,” while also easing pressure on urban employment and education systems.</p><p>In implementation, large numbers of youths were assigned to settle in villages, where they lived long-term and joined collective labor. Conditions varied by region, but overall living environments were harsh, with limited infrastructure, medical care, and educational resources.</p><p>Socially, the policy had mixed effects. On one hand, it helped relieve urban employment pressure to some extent, promoted population movement between urban and rural areas, and brought labor and knowledge resources to some rural communities. Many sent-down youths gained practical experience and direct understanding of grassroots society, and this experience later left an important imprint in literature and cultural expression.</p><p>On the other hand, it strongly affected a generation’s educational and career trajectories. Many young people had their schooling paths interrupted, and prolonged rural placement affected later development. Resource and living-condition disparities between city and countryside created material and psychological strain. The policy was also implemented with strong uniformity and coercive elements, leaving limited individual choice. In the late 1970s, as policy shifted and the national college entrance exam resumed in 1977, large numbers of sent-down youths gradually returned to cities, and the movement came to an end.</p></article>`
+  },
+  7: {
+    htmlCn: `<article class="event-article"><figure class="event-figure"><img src="assets/__2026-05-11_22.05.32-ed3dce8a-0589-45e4-b827-972bab812209.png"><figcaption class="event-source">图片来源于中国新闻网</figcaption></figure><h2 class="event-title">珍宝岛事件</h2><p>珍宝岛事件发生于1969年，是中国与苏联在边界争议背景下爆发的一次武装冲突。争议地区位于乌苏里江上的珍宝岛（俄方称“达曼斯基岛”），该地区的归属问题源于19世纪中俄边界条约（如《瑷珲条约》《北京条约》）中对界河划分的不明确，双方对以主航道还是河岸为界存在不同理解。</p><p>进入20世纪60年代，中苏关系因意识形态分歧与国家利益冲突持续恶化，两国在边境地区加强军事部署，对峙局势不断升级。1969年3月初，双方在珍宝岛附近发生首次大规模武装冲突。3月2日，中国边防部队与苏联边防部队在岛上发生交火，随后3月中旬冲突再次升级，双方使用更大规模兵力与重武器进行作战。</p><p>冲突主要集中在珍宝岛及其周边水域，战斗时间较短但强度较高。此后，双方在中苏边境其他地区（如新疆方向）也出现紧张局势，边境整体进入高度戒备状态。冲突未演变为全面战争，但两国关系降至低点。事件之后，中苏双方通过外交渠道逐步进行接触与谈判，边境局势在一定程度上趋于缓和。长期来看，珍宝岛事件成为中苏关系破裂的重要标志之一。</p></article>`,
+    htmlEn: `<article class="event-article"><figure class="event-figure"><img src="assets/__2026-05-11_22.05.32-ed3dce8a-0589-45e4-b827-972bab812209.png"><figcaption class="event-source">Image source: China News Service</figcaption></figure><h2 class="event-title">Zhenbao Island Incident</h2><p>The Zhenbao Island Incident occurred in 1969 as an armed clash between China and the Soviet Union under a broader border dispute. The disputed area was Zhenbao Island (called Damansky Island in Russian) on the Ussuri River. Sovereignty disputes there stemmed from ambiguities in 19th-century border treaties such as the Treaty of Aigun and the Convention of Peking, especially over whether the boundary should follow the main channel or a riverbank line.</p><p>In the 1960s, Sino-Soviet relations deteriorated continuously due to ideological conflict and clashing national interests. Both sides strengthened military deployment along the border and confrontation intensified. In early March 1969, major armed clashes first broke out near Zhenbao Island. On March 2, Chinese and Soviet border forces exchanged fire on the island; in mid-March the conflict escalated again, with larger forces and heavier weapons used by both sides.</p><p>Fighting centered on Zhenbao Island and nearby waters. Although brief, it was intense. Tensions also rose in other sections of the Sino-Soviet border, including in Xinjiang, placing the border in a high-alert posture. The conflict did not escalate into full-scale war, but bilateral relations fell to a low point. Afterwards, both sides gradually reopened contact and negotiations through diplomatic channels, and tensions eased to some extent. In the long term, the incident became one of the key markers of the Sino-Soviet split.</p></article>`
+  },
+  8: {
+    htmlCn: `<article class="event-article"><figure class="event-figure"><img src="assets/__2026-05-11_21.38.13-b86507e3-ad6e-4873-bf64-b3cbfa3a857f.png"><figcaption class="event-source">图片来自于新华社</figcaption></figure><h2 class="event-title">改革开放</h2><p>20世纪80年代以来，随着改革开放的推进，市场逐步放开，新的经济形式不断出现。1987年，成都“华茂典当服务商行”开张，成为新中国成立后第一家典当行，象征着市场机制的恢复与城市经济的活跃；与此同时，农村改革激发了农业生产力，推动农业逐步走向商品化。随着基础设施的改善与区域联系的加强，许多原本封闭的地区开始发生变化，如川陕公路穿过剑门镇，使小镇与外部世界建立起更紧密的联系，也改变了当地居民的生活方式与发展机会。</p><p>在这一宏观变革背景下，教育领域的变化同样深刻。受观念和经济条件限制，20世纪90年代大凉山彝族女童入学率较低，当地一些学校甚至没有女学生。为改变这一状况，国家拨款设立彝族女子班，四川凉山彝族自治州普格县东山乡中心学校成为最早的试点之一。为招收90名女生，乡干部和教师挨家挨户动员，学生实行住校制，仅需缴纳少量杂粮、柴薪和现金。</p><p>然而，由于条件艰苦，当时东山乡尚未通电，孩子们只能在简陋环境中学习和生活，甚至没有食堂，只能在教室外用餐。这些细节真实记录了改革开放初期发展不平衡的现实，也映照出社会转型中教育机会逐步扩展的过程。</p></article>`,
+    htmlEn: `<article class="event-article"><figure class="event-figure"><img src="assets/__2026-05-11_21.38.13-b86507e3-ad6e-4873-bf64-b3cbfa3a857f.png"><figcaption class="event-source">Image source: Xinhua News Agency</figcaption></figure><h2 class="event-title">Reform and Opening-Up</h2><p>Since the 1980s, with the advance of reform and opening-up, markets were gradually liberalized and new economic forms emerged. In 1987, Chengdu’s “Huamao Pawn Service Firm” opened as the first pawnshop established after the founding of the PRC, symbolizing the revival of market mechanisms and the renewed vitality of urban economies. At the same time, rural reform unleashed agricultural productivity and promoted the commercialization of agriculture. As infrastructure improved and regional linkages strengthened, many previously isolated areas began to change. For example, the Chuan-Shaan Highway passing through Jianmen Town connected the town more closely with the outside world and reshaped local livelihoods and development opportunities.</p><p>Against this macro transformation, changes in education were also profound. In the 1990s, enrollment rates for Yi girls in Liangshan were low due to social attitudes and economic constraints, and some local schools had no female students at all. To address this, the state funded special Yi girls’ classes. Dongshan Township Central School in Puge County, Liangshan Yi Autonomous Prefecture, Sichuan, became one of the earliest pilot sites. To recruit 90 girls, local cadres and teachers conducted door-to-door mobilization. Students were housed on campus and paid only small amounts of grain, firewood, and cash.</p><p>Yet conditions remained difficult. At that time Dongshan Township still had no electricity, and children studied and lived in very basic environments; there was not even a cafeteria, so they ate outside classrooms. These details vividly record the uneven development of the early reform period and reflect the gradual expansion of educational opportunity during social transformation.</p></article>`
+  },
+  9: {
+    htmlCn: `<article class="event-article"><figure class="event-figure"><img src="assets/__2026-05-11_21.59.05-12bc257a-9e58-4295-be77-b5b56626ad8f.png"><figcaption class="event-source">图片来源于BBC</figcaption></figure><h2 class="event-title">香港回归</h2><p>1842年清政府在鸦片战争战败后与英国签订《南京条约》，将香港岛割让给英国；此后通过1860年的《北京条约》和1898年的《展拓香港界址专条》，九龙和新界相继被割让或租借，香港逐步成为英国殖民地。这一系列条约构成了香港问题的历史起点。</p><p>1997年7月1日，香港主权由英国移交中华人民共和国，香港特别行政区正式成立。此次回归是根据1984年中英双方签署的《中英联合声明》实现的，该文件确定中国于1997年恢复对香港行使主权。</p><p>回归后，中央政府依据《中华人民共和国香港特别行政区基本法》对香港实行“一国两制”、“港人治港”、高度自治的方针。香港原有的资本主义制度和生活方式在回归后得以保持，法律体系、经济制度及对外贸易地位基本延续。</p></article>`,
+    htmlEn: `<article class="event-article"><figure class="event-figure"><img src="assets/__2026-05-11_21.59.05-12bc257a-9e58-4295-be77-b5b56626ad8f.png"><figcaption class="event-source">Image source: BBC</figcaption></figure><h2 class="event-title">Hong Kong Handover</h2><p>After its defeat in the First Opium War, the Qing government signed the Treaty of Nanking with Britain in 1842, ceding Hong Kong Island. Through the 1860 Convention of Peking and the 1898 Convention for the Extension of Hong Kong Territory, Kowloon and the New Territories were subsequently ceded or leased, and Hong Kong gradually became a British colony. These treaties formed the historical starting point of the Hong Kong question.</p><p>On July 1, 1997, sovereignty over Hong Kong was transferred from Britain to the People’s Republic of China, and the Hong Kong Special Administrative Region was formally established. The handover was implemented according to the 1984 Sino-British Joint Declaration, which confirmed that China would resume exercise of sovereignty over Hong Kong in 1997.</p><p>After the handover, under the Basic Law of the Hong Kong Special Administrative Region, the central government implemented the principles of “one country, two systems,” “Hong Kong people administering Hong Kong,” and a high degree of autonomy. Hong Kong’s original capitalist system and way of life were maintained, and its legal framework, economic system, and external trade status largely continued.</p></article>`
+  }
+};
+
+function renderEventModalByLang(eventId){
+  var article = eventId ? eventArticles[eventId] : null;
+  eventModalContent.innerHTML = article
+    ? (currentSiteLang === "zh-CN" ? article.htmlCn : article.htmlEn)
+    : (currentSiteLang === "zh-CN" ? "<p>点击事件后显示说明内容（待补充）。</p>" : "<p>Placeholder description shown after you click an event.</p>");
+}
+
+document.querySelectorAll(".grid-item").forEach(function (el) {
+  el.onclick = function () {
+    activeEventId = el.getAttribute("data-event");
+    renderEventModalByLang(activeEventId);
+    eventModal.style.display = "flex";
+    if (window.gsap) {
+      gsap.fromTo(eventModal, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.26, ease: "power2.out" });
+      gsap.fromTo(
+        eventModalContent,
+        { autoAlpha: 0, y: 22 },
+        { autoAlpha: 1, y: 0, duration: 0.4, ease: "power3.out", delay: 0.05 }
+      );
+    }
+  };
+});
+eventModal.onclick = function (e) {
+  if (e.target === eventModal) {
+    eventModal.style.display = "none";
+    activeEventId = null;
+  }
+};
+
+var storyArticles = {
+    1: {
+        titleCn: "长裕新街12号门牌：80年代的经济转型",
+        titleEn: "No. 12 Changyu New Street: Economic Transition in the 1980s",
+        htmlCn: `<p><strong>受访者：</strong>KC（陈先生）</p>
+<p class="story-caption"><em>（原物件已遗失，图为受访者收藏中的类似门牌：徽州弄007）</em></p>
+<p>2019年，位于蓬莱的一处老宅在城市更新中被拆除。得知消息后，陈先生从北京赶回老家，在废墟中试图寻找还能留下的东西。最终，他找到了一块门牌。</p>
+<p>“我就看到一个门牌号，我就想，这是我曾经的家的一个象征，一个标记物，我就想把它带回来。”</p>
+<p>这块被带走的门牌，蓝底白字，是20世纪80至90年代中国城镇中最常见的街道标识之一。它原本属于一栋建于1983年的住宅，地址是“长裕新街12号”。陈先生回忆说：“这是一种很常见的门牌，80年代、90年代的街道上都是这种蓝底白字。”</p>
+<p>如今，这块门牌由他的母亲保存，成为这个家庭与原址之间最后的物理连接，这块门牌不仅标记了一处地址，也记录了一个家庭进入城市的过程。本文将沿着陈先生的生命轨迹，追溯新中国户籍制度的历史演变，并探讨其与不同时期经济体制与社会结构之间的深层关联。</p>
+<h3>户籍制度与单位制</h3>
+<p>陈先生出生于1980年。他的父母来自同一个村庄。父亲较早进入城市，在市区一家建筑单位工作：“我爸爸当时是在蓬莱市区的建筑公司里面工作，是个事业单位，所以他比较早靠自己走出了农村。”</p>
+<p>母亲则是在婚后，通过亲属关系获得进城机会：“当时找了一个亲戚，他是管物资分配的，可以解决进城名额，所以我妈妈就是靠他给解决了。”</p>
+<p>这一过程与当时的户籍制度与单位制密切相关。新中国成立初期，1954年宪法曾赋予公民一定的迁徙自由。但在大跃进及随后的人口与资源危机之后，国家在1960年前后逐步强化了对人口流动的控制，户籍制度成为城乡分割的重要机制。</p>
+<p>正如Dutton所指出的，中国的户籍制度在某种程度上类似于苏联的居住登记（propiska），它不仅限制人口从农村向城市流动，也将教育、医疗和就业等社会资源与地域身份紧密绑定。</p>
+<p>到了1970年代末，随着改革开放的启动，人口流动开始逐渐增加，但城乡之间的转换仍然困难。进入1980年代后，政策有所松动，一部分“自理口粮户”开始出现，使得农村人口可以在不完全依赖国家供给的情况下通过购买身份进入城市生活。而另一部分人通过企业招工此类方式进入城市。</p>
+<p>正是在这样的背景下，1983年，受访者的父母在决定在城里建房。</p>
+<p>“我爸爸又是搞建筑的，所以他就自己回来盖房子，就盖了长裕新街12号。”</p>
+<p>这块门牌因此不仅是一个地址的标识，更是一次迁移的见证，从农村到城市，从制度限制到逐渐松动的边界。当房屋被拆除，这块门牌成为唯一被带走的“原址”，也是一个家庭在城市中扎根的证据。</p>
+<p>“我推开我的院门，就是邻居家，我们经常夜不闭户。街坊的孩子都是同学，整条街坊的大人基本上都是一个单位的同事，所以在这种情况下是十分鼓励社交的。”</p>
+<p>陈先生从三岁开始在这里长大。这个门牌所指向的不只是一个房子，而是一整个生活世界，整条街坊之间这种紧密的联系，在今天看来已经很难实现。但在新中国成立初期，这种社会结构的形成有其历史背景。一方面，中国在建立新的国家体制时，确实在城市治理和组织方式上部分借鉴了苏联的经验；但另一方面，这种“单位式”的生活方式，也是在中国自身的经济条件和社会结构中逐渐形成的。</p>
+<p>在理论层面，马克思和恩格斯指出，在共产主义社会中，私有制需要被取消。但在具体实践中，中国的单位制度并不是简单的理论落实，而是在建国初期复杂的现实条件下逐步发展出来的。那个时期，中国在国际关系、经济基础和社会治理方面都面临较大的不确定性，这样的环境也促使国家通过更集中化的方式来组织资源与人口。</p>
+<p>正如李汉林在对单位制度的研究中所指出的，中国传统社会中以家庭为核心的依附关系，在一定程度上延伸到了单位之中，使得个人及其家庭对单位产生了稳定而具体的依赖。在单位制的经济模式下，孩子的教育、家庭的住房、医疗等生活的方方面面，往往都由单位和国家来提供。</p>
+<p>因此，单位和今天的企业有很大的不同。单位更像是一个微型社会，是一个功能高度综合的制度，同时也具有很强的人身依附关系，个人很难自由流动。这一点也与户籍制度相互配合，使人口在空间上的流动受到限制。而在改革开放之后，企业在大多数情况下逐渐转变为以就业为主的平台，个人的生活与工作开始分离。</p>
+<p>也正是在这样的制度背景下，陈先生所描述的“整条街坊的人都是熟人”的状态成为可能。这个门牌所标记的，不只是一个具体的地址，而是一种由单位组织起来的生活方式，一种工作、居住与社会关系彼此重叠的日常结构。</p>
+<h3>空间重组中的门牌意义转变</h3>
+<p>随着时间的推移，这种结构逐渐发生变化。当房屋被拆除，门牌被取下，它所承载的不只是一个家庭的记忆，也是一种已经逐渐消失的社会形态的痕迹。</p>
+<p>而单位制这一社会形态的消失的同时，城市空间本身也在发生变化。</p>
+<p>陈先生记忆中的家，原本位于城市的边缘地带，但随着城市扩张，它逐渐被纳入中心区域。“一开始我们那个地方是城市边缘，现在已经是市区里面了。”他说。“以前的街道现在都没有了，被小区围墙取代了。”</p>
+<p>伴随着城市化进程的推进，门牌所代表的那种以街道为单位的开放空间，正在逐渐消失，并被新的居住形态所替代：原本的街道被规划为小区，开放的通行空间转变为带有边界的半封闭结构，而原先标记具体门口的门牌，也被统一的楼号与单元系统所取代。这种变化不仅是物理空间的更新，也意味着人与人之间关系结构的重组。</p>
+<p>在门牌所对应的那个时代，空间与社会关系是紧密交织的。街道不仅是交通空间，更是日常生活的一部分，是邻里之间共享的公共场所。“一到晚上，这个地方就成为街坊邻居的公共空间。”</p>
+<p>这种空间的开放性，使得社区生活呈现出一种高度可见、可参与的状态。一个发生在1990年代的记忆，将这种氛围展现得尤为具体。当时流传着关于“世界末日”的谣言，人们对于待在室内感到不安，于是纷纷走到街道上过夜：“我们觉得在家里睡觉不安全，就搬到门口睡。大家就摆麻将桌、摆扑克桌，还有人把卡拉OK搬出来。”</p>
+<p>在那个夜晚，原本作为通行空间的街道被重新占用和转化，成为一个临时的、由居民自发组织的公共生活场域。娱乐、交谈与集体性的在场感，使街道从日常的生活背景转变为事件的中心。这种由不确定性引发的集体行动，也反映出当时社区内部高度的信任与连接。</p>
+<p>随着房屋的拆迁，这块门牌逐渐失去了它原本作为地址标识的功能，但也在这个过程中获得了新的意义。</p>
+<p>它最初是一个精准到户的地理标记物，对应着“长裕新街12号”这个具体的位置。在没有手机的年代，这样的门牌承担着非常实际的功能。“亲戚来拜访，只要记得这个号码就能找到家。”而如今，门牌与原有空间之间的对应关系被切断。</p>
+<p>但正是在这种失效之中，它开始转变为记忆的载体。受访者说：“它是我童年记忆的承载。”关于成长的经验、家庭的日常、邻里的往来，都围绕着这个地址展开。门牌不再只是一个工具性的标识，而成为承载个人经历的具体物件。</p>
+<p>与此同时，它也象征着一种已经发生变化的社区关系。受访者反复提到过去的生活环境：“以前的弄堂让大家有很深的邻里关系。”而在今天的城市居住形态中，这种关系变得难以维系，“在高楼里面，很难再有这样的邻居感情。”</p>
+<p>即使这个地址已经不复存在，它仍然构成一种身份与归属的线索。“拿这个地址的人，也是一种身份认同。”这个原本用于定位的编号，在空间消失之后，反而成为人与过去之间的一种确认方式。</p>
+<p>一个同样重要的变化发生在当下。二十年后，受访者的母亲搬回了这个区域的回迁房。“很多年不见的老邻居又重新见到了。”“街坊们重新聚在一起，对冲了一些孤独。”尽管原有的空间形态已经改变，街道被小区取代，门牌不再存在于原位，但人与人之间的关系并没有完全中断，而是在新的空间中以另一种方式延续下来。</p>
+<h3>注释（Chicago Endnotes）</h3>
+<ol class="story-ref-list story-endnotes">
+<li>Amy Auerbacher Wilson, Sidney Leonard Greenblatt, and Richard Whittingham Wilson, eds., <cite>Deviance and Social Control in Chinese Society</cite> (New York: Praeger, 1977).</li>
+<li>Michael R. Dutton, <cite>Policing and Punishment in China: From Patriarchy to “the People”</cite> (Cambridge: Cambridge University Press, 1992).</li>
+<li>Chen Jinyong, “China’s Hukou System Reform and Rural-Urban Migration,” unpublished manuscript / course reading.</li>
+<li>Karl Marx and Friedrich Engels, <cite>The Communist Manifesto</cite> (1848), chap. 2, “Proletarians and Communists.”</li>
+<li>李汉林，《变迁中的中国单位制度：回顾中的思考》，《社会学研究》1993年第4期。</li>
+<li>渠敬东、傅春晖，《单位制与师徒制——总体体制下企业组织的微观治理机制》，《社会学研究》，年份，页4。</li>
+</ol>`,
+        htmlEn: `<p><strong>Interviewee:</strong> KC (Mr. Chen)</p>
+<p class="story-caption"><em>(The original object has been lost; the image shows a similar doorplate from the interviewee's collection: Huizhou Alley 007)</em></p>
+<p>In 2019, an old residential house in Penglai was demolished during urban renewal. Upon hearing the news, Mr. Chen rushed back from Beijing to his hometown, searching through the rubble for anything that could still be kept. In the end, he found a doorplate.</p>
+<p>“I saw the house number and thought: this is a symbol of my old home, a marker. I wanted to bring it back.”</p>
+<p>The plate was blue with white lettering, one of the most common street identifiers in Chinese towns during the 1980s and 1990s. It originally belonged to a residence built in 1983 at “No. 12 Changyu New Street.” Mr. Chen recalled: “This was a very common type of plate. Streets in the 80s and 90s were full of these blue-and-white signs.”</p>
+<p>Today, the plate is kept by his mother, becoming the family’s last physical link to the original site. It marks not only an address, but also a household’s entry into urban life. Following Mr. Chen’s life trajectory, this story traces the historical transformation of China’s hukou system and its deep ties to shifting economic institutions and social structures.</p>
+<h3>The Hukou System and the Danwei System</h3>
+<p>Mr. Chen was born in 1980. His parents came from the same village. His father entered the city relatively early and worked in an urban construction work unit: “My father worked in a construction company in Penglai city. It was a public institution, so he was able to leave the countryside relatively early on his own.”</p>
+<p>His mother entered the city after marriage through kinship channels: “We found a relative in charge of material allocation who could solve an urban quota, so my mother entered the city through his help.”</p>
+<p>This process was closely tied to the hukou system and the danwei (work-unit) system. In the early PRC, the 1954 Constitution granted citizens a degree of freedom of movement. But after the Great Leap Forward and subsequent crises of population and resources, the state tightened population control around 1960, and hukou became a key mechanism dividing urban and rural China.</p>
+<p>As Dutton notes, China’s hukou system was in some respects similar to the Soviet propiska system. It restricted rural-to-urban migration while binding social resources—education, healthcare, and employment—to territorial identity.</p>
+<p>By the late 1970s, with reform and opening-up, mobility increased gradually, but changing from rural to urban status remained difficult. In the 1980s, policies loosened: some “self-supplied grain ration households” emerged, allowing people to enter urban life through purchased status rather than full state provisioning; others entered through enterprise recruitment.</p>
+<p>Against this background, in 1983, Mr. Chen’s parents decided to build a house in the city. “My father was in construction, so he came back and built it himself—No. 12 Changyu New Street.”</p>
+<p>This doorplate is therefore more than an address marker: it is testimony to migration—from countryside to city, from rigid institutional boundaries to gradually loosened ones. After demolition, the plate became the only “original site” object carried away, evidence of a family taking root in urban China.</p>
+<p>“When I pushed open our gate, the neighbors were right there. We often left doors unlocked at night. The children in the lane were classmates, and most adults on the street worked in the same unit, so social life was strongly encouraged.”</p>
+<p>Mr. Chen grew up here from the age of three. The plate points not only to a house, but to an entire social world. The tight street-level ties are hard to reproduce today. Historically, however, this structure emerged from a specific context: China did draw partly on Soviet experience in urban organization, but danwei-style life also developed through China’s own economic and social conditions.</p>
+<p>At the theoretical level, Marx and Engels argued that private property should be abolished in communist society. In practice, however, China’s danwei system was not a simple implementation of theory. It evolved under complex post-1949 realities, including uncertainty in international relations, economic foundations, and governance capacity, all of which encouraged centralized organization of resources and population.</p>
+<p>As Li Hanlin argued, dependency relations centered on family in traditional Chinese society were partly extended into the danwei, producing stable and concrete reliance by individuals and households on work units. Under the danwei model, children’s schooling, housing, healthcare, and many aspects of daily life were often provided by the unit and the state.</p>
+<p>In this sense, danwei differed significantly from today’s firms. It functioned as a micro-society: highly integrated, with strong personal attachment and limited individual mobility. In conjunction with hukou, it constrained spatial movement. After reform, enterprises gradually shifted toward employment-centered platforms, and life and work became increasingly separated.</p>
+<p>Within this institutional context, Mr. Chen’s memory that “everyone on the street knew each other” became possible. The doorplate marks not only an address, but also a danwei-organized way of life in which work, residence, and social relations overlapped.</p>
+<h3>The Transformation of Doorplate Meaning in Spatial Restructuring</h3>
+<p>Over time, this structure changed. When the house was demolished and the plate removed, it carried not only family memory, but traces of a social form that has gradually disappeared.</p>
+<p>As the danwei social form declined, urban space also transformed.</p>
+<p>Mr. Chen’s home had once stood on the city’s edge, but urban expansion absorbed it into the center: “At first our place was at the urban fringe; now it’s inside the city. The old streets are gone, replaced by compound walls.”</p>
+<p>With urbanization, the open street-based space represented by the doorplate gradually disappeared and was replaced by new residential forms: streets were replanned into compounds, open circulation became semi-enclosed and bounded, and household doorplates were replaced by unified building-and-unit numbering systems. This was not only a physical restructuring of space, but also a restructuring of social relations.</p>
+<p>In that earlier era, space and social life were tightly interwoven. Streets were not only transit infrastructure, but part of everyday life and shared neighborhood public space: “At night, this area became a communal social space for neighbors.”</p>
+<p>This openness made community life highly visible and participatory. A 1990s memory illustrates the atmosphere: rumors of the “end of the world” made people uneasy indoors, so they moved outside overnight—“We felt unsafe sleeping at home, so we slept by our doors. People set up mahjong tables, card tables, and even brought karaoke out.”</p>
+<p>That night, a circulation street was temporarily reoccupied and transformed into a resident-organized public arena. Entertainment, conversation, and collective presence turned ordinary background space into the center of an event, reflecting high internal trust and community connection.</p>
+<p>With demolition, the plate gradually lost its original function as an address marker, but gained new meaning.</p>
+<p>Originally, it was a precise household-level geographic marker—“No. 12 Changyu New Street.” Before mobile phones, this had practical value: “Relatives could find us as long as they remembered the number.” Now the mapping between plate and place has been severed.</p>
+<p>Yet this functional loss is precisely what transformed it into a memory vessel. As the interviewee put it: “It carries my childhood memories.” Experiences of growing up, family routines, and neighborly interactions all gathered around this address. The plate is no longer merely utilitarian; it becomes a concrete object bearing personal history.</p>
+<p>At the same time, it symbolizes a community relation that has changed. Mr. Chen repeatedly stressed: “Old alleys produced deep neighborly ties.” In today’s high-rise housing forms, such ties are difficult to sustain: “In tall buildings, it’s hard to have that kind of neighborhood intimacy.”</p>
+<p>Even though the address no longer exists physically, it still provides a thread of identity and belonging: “Keeping this address is also a kind of identity recognition.” Once space disappears, the former locational number becomes a means of confirming connection to the past.</p>
+<p>An equally important shift is happening in the present. Years later, Mr. Chen’s mother moved back into resettlement housing in the same area: “Old neighbors I hadn’t seen for years appeared again.” “Their reunion offset some loneliness.” Although the old spatial form has changed—streets replaced by compounds, the plate removed from its original site—social ties were not fully broken, and continue in a new spatial form.</p>
+<h3>Endnotes (Chicago Style)</h3>
+<ol class="story-ref-list story-endnotes">
+<li>Amy Auerbacher Wilson, Sidney Leonard Greenblatt, and Richard Whittingham Wilson, eds., <cite>Deviance and Social Control in Chinese Society</cite> (New York: Praeger, 1977).</li>
+<li>Michael R. Dutton, <cite>Policing and Punishment in China: From Patriarchy to “the People”</cite> (Cambridge: Cambridge University Press, 1992).</li>
+<li>Chen Jinyong, “China’s Hukou System Reform and Rural-Urban Migration,” unpublished manuscript / course reading.</li>
+<li>Karl Marx and Friedrich Engels, <cite>The Communist Manifesto</cite> (1848), chap. 2, “Proletarians and Communists.”</li>
+<li>Li Hanlin, “变迁中的中国单位制度：回顾中的思考,” <cite>社会学研究</cite>, no. 4 (1993).</li>
+<li>Qu Jingdong and Fu Chunhui, “单位制与师徒制——总体体制下企业组织的微观治理机制,” <cite>社会学研究</cite>, n.d., 4.</li>
+</ol>`,
+    },
+    2: {
+        titleCn: "舵绣鞋垫：从大山到新疆",
+        titleEn: "Embroidered Shoe Insoles: From the Mountains to Xinjiang",
+        htmlCn: `<p><strong>受访者：</strong>Flora（李女士）</p>
+<p>这是一双来自甘肃省天祝县的手工鞋垫。当地位于中国西北山区，过去长期处于交通不便、物资匮乏的状态，人们的日常生活在很大程度上依赖手工劳动与自我生产来维持基本需求。</p>
+<p>鞋垫由废弃布料制成：将做衣服剩余的碎布一层层叠加、压实，再通过针线反复缝制，使其逐渐变得厚重而坚实；其表面则采用一种被称为“舵绣”的刺绣技法，绣出具有装饰性的花纹图案。由于制作过程繁复，一双鞋垫往往需要耗费大量时间与精力，因此它既是日常生活中实用的消耗品，也承载着地方性的手工艺传统。</p>
+<p>在20世纪60至70年代，这类手工鞋垫几乎是日常生活的必需品之一，当时人们穿着的鞋大多较为简陋，必须依靠手工鞋垫来增加舒适性与耐用性。</p>
+<p>这双鞋垫来自李女士的母亲。解放前，由于外公在当地被视为有一定声望的文化人，她出生于一个相较周围邻里条件略好的家庭。在她的成长过程中，女性从小便被纳入一种围绕婚姻与家庭生活能力的社会期待之中，尤其是与未来“成家”密切相关的技能训练。</p>
+<p>李女士回忆道：“在当时，女孩子一定要有两样本事，才能嫁得好：要会茶饭，也要会针线。”其中，“会茶饭”主要指能够制作奶茶等日常饮食，这是以放牧为主的生活环境中最基础的饮食技能；而“会针线”则体现在缝纫、纳鞋底以及刺绣等一系列手工劳动能力之中。</p>
+<p>在这样的社会文化结构中，纳鞋垫不仅是一种生活技能，也具有明确的婚姻与家庭意义。好看的鞋垫往往可以作为出嫁时的重要陪嫁物品，象征着女性的勤劳与手艺，也在一定程度上影响未来的婚姻。</p>
+<p>因此，这双鞋垫并不仅仅属于日常生活用品的范畴，同时也嵌入了婚姻制度与性别分工的结构之中，成为个体人生轨迹与家庭关系转换的重要物质见证。</p>
+<h3>从大山走进新疆</h3>
+<p>与此同时这双鞋垫所连接的家庭历史，与新中国成立后西北与边疆地区的发展进程密切相关。李女士的母亲早婚后跟随丈夫搬至新疆。李女士的父亲早年参军，进入以王震为重要领导核心的部队体系，并随部队进入新疆参与边疆建设与开发工作。</p>
+<p>在新中国成立初期的国家治理框架中，这类军事—生产复合型组织不仅承担国防任务，也在很大程度上参与了边疆地区的基础性建设与社会重组。对于许多参与其中的个体而言，进入新疆既是一种组织性调动，也意味着进入一个全新的地理与生活空间。</p>
+<p>在李女士父亲的回忆中，这一时期的生活与工作条件极为艰苦：初到新疆时环境荒凉，“野草比人还高”，需要从最基础的开荒、平整土地、搭建住所开始逐步建立生活基础；同时自然环境也充满挑战，黑蚊成群，生存条件恶劣。医疗资源极为有限，其父亲曾因蚊虫传播疾病感染疟疾，险些丧命。</p>
+<p>“那个时候新疆很荒，很苦，他们就是去开拓那个地方”，这一个人家庭叙事，也折射出20世纪中期国家在边疆地区推进大规模开发与治理的历史进程。</p>
+<p>采访中，李女士提到近几十年来她眼中的新疆变化巨大，这也引出一个具有争议的问题：开拓新疆的利与弊。总体而言，兵团建设在提升新疆经济与工业基础的同时，也带来了移民与本地社会之间的结构性张力。</p>
+<h3>从军人到石油工人：国家建设中的转型（1970s）</h3>
+<p>由于身体原因，李女士的父亲后来从部队转业，进入新疆的石油企业工作。这一转变发生在20世纪70年代国家加快能源开发与工业体系建设的背景之下，也与新疆在国家能源版图中地位的迅速上升密切相关。</p>
+<p>1949年，全国原油产量仅12万吨。1950年代后，随着国家工业化战略推进，准噶尔盆地勘探启动，克拉玛依一号井喷出工业油流，标志新中国第一个大油田诞生。到1960年，油田原油产量增至163万吨，占全国39%。</p>
+<h3>当下的意义</h3>
+<p>随着工业化推进与生活方式变化，这类手工鞋垫逐渐退出日常使用，更多被标准化工业品替代。对李女士而言，这双鞋垫在母亲去世后，成为她与母亲、与故乡之间持续联结的重要媒介。</p>
+<h3>注释</h3>
+<ol class=\"story-ref-list story-endnotes\">
+<li>Haiqun Li and Shiping Cui, “On the Historical Role of Han Migration to Xinjiang after 1949,” <cite>Journal Name</cite>, no. Issue (Year).</li>
+<li>Agnieszka Joniak-Luthi, “Han Migration to Xinjiang Uyghur Autonomous Region,” <cite>Zeitschrift fur Ethnologie</cite> 138, no. 2 (2013): 155-174.</li>
+<li>新疆生产建设兵团史志编写组：《新疆生产建设兵团发展史》，乌鲁木齐：新疆人民出版社，2011年。</li>
+<li>李海群、崔世平：《论建国后新疆汉族移民的历史作用》，第39页。</li>
+<li>中国石油天然气集团有限公司：《克拉玛依一号井——新中国第一个大油田的诞生》，2025年10月28日，<a href=\"https://news.cnpc.com.cn/system/2025/10/28/030176936.shtml\" target=\"_blank\" rel=\"noopener\">https://news.cnpc.com.cn/system/2025/10/28/030176936.shtml</a>。</li>
+<li>《中国油气田开发志·新疆油气区卷》，北京：石油工业出版社，2012年。</li>
+</ol>`,
+        htmlEn: `<p><strong>Interviewee:</strong> Flora (Ms. Li)</p>
+<p>This pair of handmade shoe insoles comes from Tianzhu County in Gansu Province. Located in the mountainous region of northwest China, the area was historically characterized by poor transportation and material scarcity. In the past, daily life largely depended on manual labor and self-production to meet basic needs.</p>
+<p>The insoles are made from discarded fabric. Layers of leftover cloth are stacked and compressed, then repeatedly stitched until they become thick and durable. The surface is decorated using “duo xiu” (舵绣), producing ornamental floral patterns. As a labor-intensive craft, they were both practical household goods and carriers of local tradition.</p>
+<p>In the 1960s and 1970s, handmade insoles were an everyday necessity. Shoes were often basic, and people depended on stitched insoles for comfort and durability.</p>
+<p>These insoles belonged to Ms. Li’s mother. Before 1949, her maternal grandfather was a respected local cultural figure, and the family was relatively better off than surrounding households. Girls were socialized early into expectations centered on marriage and domestic competence.</p>
+<p>Ms. Li recalled: “A girl had to master two skills to marry well: cooking and sewing.” In that context, insole-making was not merely domestic labor, but a marker of diligence and craftsmanship, often included in dowry.</p>
+<h3>From the Mountains to Xinjiang</h3>
+<p>The family history linked to these insoles is closely connected to frontier development after 1949. After marriage, Ms. Li’s mother moved to Xinjiang with her husband; her father, after military service, entered frontier construction work.</p>
+<p>In the early PRC, military-production organizations combined defense, production, and social administration. For individuals, moving to Xinjiang meant both institutional assignment and entry into a radically new environment.</p>
+<p>According to family recollection, conditions were harsh: land reclamation began from scratch, mosquitoes were severe, and medical resources were extremely limited; her father once nearly died from malaria.</p>
+<h3>From Soldier to Oil Worker: Transformation in State-Building (1970s)</h3>
+<p>After leaving the military for health reasons, Ms. Li’s father worked in Xinjiang’s petroleum sector. This shift reflected Xinjiang’s rising role in national energy development during the 1970s.</p>
+<p>With the discovery and expansion of Karamay, Xinjiang became a key energy base in China’s industrial geography, and individual careers were reconfigured within national development strategies.</p>
+<h3>Contemporary Significance</h3>
+<p>With industrialization and lifestyle change, handmade insoles gradually disappeared from daily use. After her mother passed away during the COVID-19 period, this remaining pair became a key memorial object—a material link between Ms. Li, her mother, and her mother’s hometown.</p>
+<h3>Endnotes</h3>
+<ol class=\"story-ref-list story-endnotes\">
+<li>Haiqun Li and Shiping Cui, “On the Historical Role of Han Migration to Xinjiang after 1949,” <cite>Journal Name</cite>, no. Issue (Year).</li>
+<li>Agnieszka Joniak-Luthi, “Han Migration to Xinjiang Uyghur Autonomous Region,” <cite>Zeitschrift fur Ethnologie</cite> 138, no. 2 (2013): 155-174.</li>
+<li>新疆生产建设兵团史志编写组, <cite>新疆生产建设兵团发展史</cite> (乌鲁木齐: 新疆人民出版社, 2011).</li>
+<li>Li Haiqun and Cui Shiping, “On the Historical Role of Han Migration to Xinjiang after 1949,” 39.</li>
+<li>China National Petroleum Corporation, “Karamay No. 1 Well: The Birth of New China’s First Major Oilfield,” October 28, 2025, <a href=\"https://news.cnpc.com.cn/system/2025/10/28/030176936.shtml\" target=\"_blank\" rel=\"noopener\">https://news.cnpc.com.cn/system/2025/10/28/030176936.shtml</a>.</li>
+<li><cite>中国油气田开发志·新疆油气区卷</cite> (Beijing: Petroleum Industry Press, 2012).</li>
+</ol>`,
+    },
+    3: {
+        titleCn: "摄影教案：城建的发展",
+        titleEn: "Photography Teaching Notes: The Development of Urban Construction",
+        htmlCn: `<p><strong>受访者：</strong>沈飞地</p>
+<p>这是一页已经泛黄的手写教材，字迹在时间的侵蚀下略显模糊，却还是能清楚的辨认。标题写着：曝光控制的理论与概念。它出自受访者的外祖父胡祖瑞之手，写于20世纪80年代，被用于培训当时城市建设体系中的档案相关工作人员。</p>
+<p>那个技术体系尚在逐步建立的年代，这类教材并非标准化出版物，而是依靠工作者在日常的长期实践中不断总结、记录，并通过手写、讲授与传递的方式延续下来。其内容围绕城市测绘与档案记录中的摄影技术展开，涵盖了从基础记录方法到具体操作标准的细节。</p>
+<p>在这篇文章中，我将以沈先生外祖父胡祖瑞的个人经历为线索，追溯一个更为宏大的历史进程：1970年代文化大革命结束之后，中国社会如何在秩序断裂的背景下逐步重建新的制度与知识体系。</p>
+<p>教材的作者胡祖瑞，1935年出生于浙江宁波。在他的成长与职业轨迹中，几乎可以看到一条与新中国技术体系同步展开的路径。</p>
+<p>青年时期，他进入军队系统，并就读于测绘学院，随后参与国家基础测绘与相关技术工作。在这一阶段，他的身份是国家建设体系中的技术人员，工作内容高度依赖精密测量与空间数据的采集。</p>
+<p>1970年代初，他从部队转业，回到南京，进入城市建设系统工作，先后任职于南京市城市建设局、勘测设计院，并在后期进入城市建设档案馆。这一系列机构的转换，也标志着他职业重心的变化，从直接参与空间的测量，逐渐转向对空间的记录与保存。而在城市建设档案馆工作的这段时期，被沈先生形容为外祖父人生中最重要的一段记忆。</p>
+<p>从面向物理空间的技术操作，转向面向制度与文本的整理工作。在这一过程中，他逐渐进入并参与到一个新的领域：城市建设档案的建立与规范化整理。这一领域在当时仍处于生成阶段，既缺乏统一标准，也尚未完全制度化，而更多依赖于像他这样的技术人员，在实践中不断书写、归纳与修正。</p>
+<p>也正是在这一背景下，那些看似普通的手写教材、技术笔记与培训材料，逐渐显现出其双重属性：它们既是具体工作的工具，也是制度形成过程本身的痕迹。人与物之间的关系，在这里并不是单向的“使用”关系，而是一种相互生成的过程——人通过物来组织知识，而物也在反过来塑造制度如何被理解与延续。</p>
+<h3>城建档案工作的发展</h3>
+<p>1952年4月，中共中央委托中国人民大学开办档案专业，系统培养档案干部，同年11月中国人民大学正式设立档案班，这一举措标志着新中国第一个档案教育机构的诞生，是国家档案人才培养体系的开始。然而，这一早期建设在随后的文化大革命期间遭遇严重冲击，档案事业整体发展受到破坏，许多制度建设与专业积累被中断，档案管理体系出现明显断层。</p>
+<p>进入20世纪70至80年代，中国城市逐步走出停滞状态，开始进入恢复与快速发展的阶段，城市基础设施建设与空间更新活动显著增加，新的城市图纸、工程资料与规划文件大量产生。然而，与快速增长的城市建设实践相比，当时的档案管理体系却明显滞后：大量城市建设资料缺乏统一归档与系统整理，导致信息分散、难以追溯；技术标准尚未建立或尚不统一，不同单位之间的档案格式与分类方式差异较大；同时，具备专业档案知识与城市建设背景的复合型人才严重不足，使得档案管理长期依赖经验性操作而缺乏制度化支撑。</p>
+<p>在这样的结构性缺口之下，一批来自城市规划、工程技术与行政管理领域的专业人员开始介入档案体系的重建与规范化工作，推动城市建设资料从分散保存走向制度化管理。在这一历史转型过程中，胡祖瑞作为南京第一任城市建设档案馆馆长，参与并推动了城市建设档案体系的初步建立。他的工作不仅涉及对历史工程资料的整理与归档，也包括在实践中逐步探索档案分类方法、管理流程与技术规范。</p>
+<h3>家庭与时代</h3>
+<p>在职业发展的同时，他的家庭也经历着一种典型的时代轨迹。</p>
+<p>他的妻子陈品华，来自浙江嘉善，早年通过亲属关系进入南京，并在城市建筑系统中工作。这种从乡镇进入城市的路径，在当时并不罕见，也就是前文讨论过的户籍制度对人口流动的限制，它往往依赖于既有的社会关系网络，在制度尚未完全开放流动的条件下，迁移至城市。</p>
+<p>两人于1960年代结婚，但婚后的生活并未立即稳定下来。由于工作调动的需要，他们长期分居：他随单位辗转于北京、青海等地，从事测绘与相关技术工作；她则留在南京，在城市建设体系中维持日常的工作与生活。空间上的分离，成为这一代人家庭经验中的常态。</p>
+<p>直到1971年，他从部队转业回到南京，家庭才真正实现团聚。这个“回到城市”的节点，不仅意味着个人职业路径的转折，也标志着一个家庭终于在空间上获得相对稳定的落点。</p>
+<p>在这个故事中，“安居”并不仅仅是家庭层面的状态，更是一种深嵌于制度之中的安排。单位分配工作、单位提供住房，个人的居住与职业路径被紧密纳入国家体系之中。稳定的生活并非完全来自个体选择，而是在很大程度上依赖于制度的配置与保障。</p>
+<p>因此，家庭的团聚与安置，既是私人生活的完成，也是制度运作的结果。个人的稳定生活，与国家秩序的逐步恢复与发展，在这一层面上形成了一种相互支撑的关系。</p>
+<p>而在另一层面上，胡祖瑞后期参与建立的城市建设档案馆，则为城市本身提供了一种“安置”的方式——将不断变化的城市空间，通过图纸、文件与影像加以记录与保存，使其成为可以被回溯、被管理、也被记忆的对象。家庭获得居所的同时，城市也在被赋予一种制度化的“记忆空间”。</p>
+<h3>注释</h3>
+<ol class=\"story-ref-list story-endnotes\">
+<li>深圳市罗湖区人民政府，《档案故事④：档案事业发展的历史进程》，深圳市罗湖区政府网，访问日期：2026年5月2日，<a href=\"https://www.szlh.gov.cn/zwfw/qgwh/daq/dazx/content/post_10665908.html\" target=\"_blank\" rel=\"noopener\">https://www.szlh.gov.cn/zwfw/qgwh/daq/dazx/content/post_10665908.html</a>。</li>
+<li>本条资料来源于对沈飞地先生的访谈记录，其内容为受访者转述其外祖父的口述历史记忆。</li>
+</ol>`,
+        htmlEn: `<p><strong>Interviewee:</strong> Shen Feidi</p>
+<p>This is a yellowed handwritten teaching manuscript. Though the handwriting has become slightly blurred through the erosion of time, it remains clearly legible. The title reads: <em>The Theory and Concepts of Exposure Control</em>. It was written by the interviewee’s grandfather, Hu Zurui, in the 1980s and used to train archival personnel within the urban construction system of the time.</p>
+<p>In an era when the technical system was still gradually taking shape, materials such as this were not standardized publications. Instead, they were continuously summarized and developed through the long-term practical experience of individuals, and passed down through handwriting, lectures, and interpersonal transmission. The content focused on photographic techniques used in urban surveying and archival documentation, covering details ranging from basic recording methods to specific operational standards.</p>
+<p>In this article, I will use the personal experiences of Hu Zurui, the grandfather of Mr. Shen, as a thread through which to trace a much broader historical process: how Chinese society gradually rebuilt new institutional and knowledge systems after the end of the Cultural Revolution in the 1970s, amid a background of social and structural rupture.</p>
+<p>The author of the teaching notes, Hu Zurui, was born in 1935 in Ningbo, Zhejiang Province. Within the trajectory of his personal growth and professional career, one can almost see a path unfolding in parallel with the development of the technological systems of the People’s Republic of China itself.</p>
+<p>As a young man, he entered the military system and studied at a surveying and mapping academy, later participating in national surveying and related technical work. During this period, his identity was that of a technical worker within the state construction apparatus, whose work relied heavily on precision measurement and the collection of spatial data.</p>
+<p>In the early 1970s, he transferred out of the military and returned to Nanjing, where he entered the urban construction system. He successively worked at the Nanjing Municipal Urban Construction Bureau, the Survey and Design Institute, and later the Urban Construction Archives Bureau. These institutional transitions also marked a shift in the focus of his professional work—from directly participating in the measurement of space to gradually turning toward the recording and preservation of space. According to Mr. Shen, this period working in the Urban Construction Archives Bureau became the most important chapter of his grandfather’s life.</p>
+<p>This transition represented a movement away from technical operations directed toward physical space and toward work centered on the organization of systems and texts. In the process, he gradually entered and participated in the emerging field of urban construction archives: the establishment and standardization of archival systems related to city construction. At the time, this field was still in a formative stage. Unified standards were lacking, and the system had not yet been fully institutionalized. Instead, it relied heavily on technical workers like him to continuously write, summarize, and revise methods through practical experience.</p>
+<p>It was precisely within this context that seemingly ordinary handwritten teaching materials, technical notes, and training documents began to reveal their dual nature. On one hand, they functioned as practical tools for everyday work; on the other, they became traces of the process through which institutions themselves were being formed. The relationship between people and objects here was not simply one of “use,” but rather a mutually generative process: people used objects to organize knowledge, while the objects themselves, in turn, shaped how institutions were understood and sustained.</p>
+<h3>The Development of Urban Construction Archival Work</h3>
+<p>In April 1952, the Central Committee of the Communist Party entrusted the People’s University of China with establishing an archival studies program to systematically train archival personnel. In November of the same year, the university officially established its archival training class, marking the birth of the first higher educational institution for archival studies in the People’s Republic of China and the beginning of the nation’s archival personnel training system.</p>
+<p>However, this early development was severely disrupted during the Cultural Revolution. The archival sector as a whole suffered extensive damage, and many institutional foundations and professional accumulations were interrupted, resulting in significant discontinuities within the archival management system.</p>
+<p>By the 1970s and 1980s, Chinese cities gradually emerged from a period of stagnation and entered a phase of recovery and rapid development. Urban infrastructure construction and spatial redevelopment activities increased significantly, producing large quantities of new city plans, engineering records, and planning documents. Yet compared with the rapid expansion of urban construction practices, the archival management system at the time lagged far behind. Large numbers of urban construction materials lacked unified archival organization and systematic management, resulting in fragmented information that was difficult to trace. Technical standards had either not yet been established or remained inconsistent, and archival formats and classification systems varied greatly between institutions. At the same time, there was a severe shortage of professionals who possessed both archival expertise and urban construction knowledge, causing archival work to rely heavily on experience-based practices rather than institutionalized systems.</p>
+<p>Within this structural gap, a group of professionals from the fields of urban planning, engineering, and administrative management began to participate in the reconstruction and standardization of the archival system, pushing urban construction materials from fragmented preservation toward systematic institutional management.</p>
+<p>During this historical transformation, Hu Zurui, as the first curator of the Nanjing Urban Construction Archives Bureau, participated in and promoted the initial establishment of the urban construction archival system. His work involved not only the organization and preservation of historical engineering materials, but also the gradual exploration of archival classification methods, management procedures, and technical standards through everyday practice.</p>
+<h3>Family and the Era</h3>
+<p>Alongside his professional development, his family life also followed a trajectory that was deeply characteristic of its historical era.</p>
+<p>His wife, Chen Pinhua, came from Jiashan, Zhejiang Province. Through family connections, she moved to Nanjing at a young age and worked within the urban construction system. This path—from a smaller town into the city through kinship networks—was not uncommon at the time. As discussed earlier in relation to the household registration (hukou) system and its restrictions on population mobility, migration into urban areas often depended on preexisting social networks under conditions where free movement had not yet been fully opened by the state.</p>
+<p>The couple married in the 1960s, but their lives did not immediately stabilize after marriage. Because of work assignments, they spent long periods living apart. Hu traveled between Beijing, Qinghai, and other regions as part of surveying and technical work tied to his unit, while Chen remained in Nanjing, maintaining everyday work and family life within the urban construction system. Spatial separation became a common experience for many families of that generation.</p>
+<p>It was not until 1971, when he transferred out of the military and returned to Nanjing, that the family was finally reunited. This moment of “returning to the city” marked not only a turning point in his personal career trajectory, but also the point at which the family finally gained a relatively stable spatial foothold.</p>
+<p>Within this story, “settling down” was not merely a familial condition, but an arrangement deeply embedded within institutional structures. Work was assigned through the danwei (work-unit) system, housing was allocated by the unit, and individual residential and professional trajectories were tightly integrated into the state system. Stability in life did not emerge entirely from personal choice; rather, it depended to a large extent on institutional allocation and state guarantees.</p>
+<p>Thus, the reunion and settlement of the family represented not only the completion of a private domestic life, but also the result of institutional operations. The gradual restoration and development of national order and the stabilization of individual family life became mutually reinforcing processes.</p>
+<p>At another level, the Urban Construction Archives Bureau that Hu Zurui later helped establish also provided a form of “settlement” for the city itself. Through drawings, documents, and photographs, constantly changing urban spaces were recorded and preserved, transforming the city into something that could be traced, managed, and remembered. As families acquired places to live, the city itself was simultaneously being endowed with an institutionalized “space of memory.”</p>
+<h3>Endnotes</h3>
+<ol class=\"story-ref-list story-endnotes\">
+<li>Luohu District People’s Government of Shenzhen Municipality, “Archival Story 4: The Historical Development of the Archival Cause,” Luohu District Government Portal, accessed May 2, 2026, <a href=\"https://www.szlh.gov.cn/zwfw/qgwh/daq/dazx/content/post_10665908.html\" target=\"_blank\" rel=\"noopener\">https://www.szlh.gov.cn/zwfw/qgwh/daq/dazx/content/post_10665908.html</a>.</li>
+<li>This material is based on an interview record with Mr. Shen Feidi, in which the interviewee relays oral-history memories narrated by his maternal grandfather.</li>
+</ol>`,
+    },
+    4: {
+        titleCn: "削皮刀：改革开放与城市的稳定发展",
+        titleEn: "Vegetable Peeler: Reform and Opening-Up and the Stabilization of Urban Life",
+        htmlCn: `<p><strong>受访者：</strong>李女士（Zoe）</p>
+<p>这是一把不锈钢削皮刀，把手为木质，末端系着一根褪了色的红色绑绳。</p>
+<p>在Zoe女士的记忆中，这把削皮刀似乎从她有记忆开始就已经存在。它总是在厨房的某个固定位置，被随手取用，又被放回原处。随着家庭数次搬迁，它被一同带往不同的房子，从一个厨房到另一个厨房，从一段生活进入下一段生活，却始终没有被扔掉。</p>
+<p>许多物件已经在时间中消失了：旧椅子、零散的杂物、曾经占据空间的家具，它们随着空间的更替被替换、被清理、被遗忘。但这把刀却一直留了下来，并没有被特别地保存，而是在日复一日的使用中延续至今。</p>
+<p>它的存在并不显眼。相比那些被刻意保留的纪念物，这样的日常器具更少被赋予意义，却也更稳定地嵌入生活本身。这把削皮刀所承载的，并不是某一个特别的记忆瞬间，而是一个见证了Zoe女士一家从70年代起在杭州稳定的生活。</p>
+<p>本文将探讨20世纪70年代之后，中国的城市生活是如何在制度重建与社会转型的背景下被重新组织，并逐步走向稳定，以及由此带来的居住形态、职业路径与日常生活结构的变化。</p>
+<h3>1978改革开放</h3>
+<p>因为这次访谈，李女士才第一次向父亲询问这把削皮刀的来历，而它被大致定位于1978至1980年之间。虽然具体年份已经无法精确确认，但这个时间段恰好对应着中国社会的重要转折时期——改革开放初期。1978年，在邓小平的推动下，中国开始实行“改革开放”政策，国家逐渐从高度计划经济体制转向更加市场化的发展模式，鼓励个体经济、外资进入以及城市工业发展。长期以来由国家统一分配和计划控制的经济结构开始逐渐松动，市场与商品重新进入人们的日常生活之中。</p>
+<p>这一时期深刻改变了中国城市居民的生活方式：消费品开始逐渐普及，人口流动增加，城市生活水平不断提高，中国社会也由此进入快速城市化与现代化的发展阶段。从经济数据来看，改革开放初期中国已经展现出明显的发展潜力：1982年国内生产总值增长率达到9.1%，1983年进一步上升至10.9%。从1978年至2008年，中国国内生产总值年均增长率达到9.79%，经济总量也从2165亿美元增长至4.4万亿美元。与此同时，人们对于“生活改善”的想象也开始发生变化。过去以“满足基本需求”为主的消费观念，逐渐转向对于便利性、效率以及生活品质的追求。</p>
+<p>但对于许多普通家庭而言，改革开放最直接的感受，并不是这些宏观的经济数据，而是生活中开始出现的新材料、新商品与新的消费选择。李女士的父亲回忆，这把削皮刀是不锈钢制成的。在当时，不锈钢仍然是一种相对新颖的材料，市场上刚刚开始出现这类产品。对他来说，它代表着一种此前较少见的“新鲜东西”，于是便决定将它买下。这把削皮刀价格约为一元，而当时他的月工资只有三十元左右。这意味着，他花费了接近一天的收入，购买这样一件厨房工具。这样的消费在今天看来或许十分普通，但在当时，却意味着一种新的生活观念正在出现：人们开始愿意为更加便利、更加现代化的日常生活付费，也开始主动尝试改革开放后逐渐进入市场的新商品。</p>
+<p>这把削皮刀的刀头前端有一个尖角。Zoe记得，小时候如果苹果有一点腐坏，家里人会用那个尖头将坏掉的部分轻轻挖去，再继续食用剩下的部分。这样的使用方式所反映的，并不仅仅是一种个人习惯，更对应着一代人在特殊历史条件下形成的生活经验。经历过大跃进、文化大革命等长期物资紧张与社会动荡的年代后，“不浪费”逐渐成为许多家庭默认的生活原则。在资源有限的环境中，人们倾向于尽可能延长物品和食物的使用价值，即使只是一个苹果，也不会轻易丢弃还能保留的部分。这种节约观念不仅塑造了日常生活方式，也深深影响了后来一代人的消费习惯与家庭记忆。</p>
+<h3>家庭生活</h3>
+<p>在这把削皮刀进入家庭的同时，一个典型的城市家庭结构也正在逐渐形成。李女士的父母属于改革开放初期常见的“双职工家庭”，夫妻双方都有固定工作，生活节奏相对稳定。家庭的日常轨迹通常围绕着“上班—回家—做饭—照顾孩子”展开。相比今天更加多元化的生活方式，当时普通城市家庭的娱乐活动相对有限，很少有远途旅行或消费型休闲文化。电视尚未完全普及，商业娱乐空间也并不丰富，家庭生活更多围绕工作、家务与邻里关系展开。对于许多人而言，稳定是那个时代最重要的生活目标之一。</p>
+<p>这种稳定感，与改革开放之后逐渐恢复和发展的城市经济密切相关。经历了此前长期的政治运动与社会动荡后，1980年代初的许多家庭开始重新建立对于未来生活的想象。固定工作、稳定收入以及能够持续改善的家庭条件，构成了一种新的生活预期。</p>
+<p>与此同时，随着经济条件逐渐改善，家庭也开始缓慢积累一些耐用消费品，例如自行车、缝纫机、收音机、电视机以及家具。有些家具甚至由父亲亲手制作，因为当时市场上的商品仍然有限，很多家庭仍保留着依靠手工制作补充日常生活的习惯。自行车、家电、家具在当时被统称为“三大件”，不同年代对应的内容略有变化，但它们普遍象征着家庭经济条件的改善与城市生活水平的提升。</p>
+<p>而家具、电器等家庭用品，逐渐构成一种现代家庭的生活影像。对于改革开放初期的城市居民而言，消费不再只是满足最基本的生存需求，而开始与对“更好生活”的追求联系在一起。像削皮刀这样看似普通的小物件，也正是在这样的历史背景下进入家庭，成为中国城市日常生活逐渐现代化的一部分。</p>
+<h3>1990年代至如今的城市发展</h3>
+<p>受访者出生于1993年的杭州。在她的记忆中，家庭已经稳定住进楼房，城市基础设施与公共服务也较为完善，整体生活呈现出一种相对成熟的状态。她说：“我小时候的生活和现在差别没有特别大。”这句话在一定程度上说明，到1990年代，中国城市生活的基本形态已经逐渐建立并趋于稳定，包括相对固定的家庭模式、以升学为导向的教育体系，以及以公园、商场和社区为核心的周末公共空间结构。</p>
+<p>她的童年记忆和2026年的大多数的杭州孩子的生活并没有太大的区别：去西湖边上课、家人沿江散步、去虎跑打水，再用水桶把水带回家。这些看似琐碎的生活片段，构成了一个高度日常化的城市生活图景。同时，她也提到了一种当时仍然存在的节水方式：夜间让水龙头缓慢滴水，等到积满一桶后再用于第二天的日常使用。这种行为延续了较早时期形成的节约习惯，也反映出资源观念在日常生活中的持续影响。</p>
+<p>从空间层面来看，Zoe的家庭虽然在城市中经历了多次搬迁，但始终没有离开钱塘江南岸这一带区域。城市空间本身则在时间中持续演变：从早期的码头与船厂，到之后的工业用地与基础生产区域，再到今天以游船、绿化与观光功能为主的滨水景观带。这种空间功能的不断更替，也在一定程度上反映了城市经济结构的持续转型与升级：从以工业生产为核心，逐渐转向以服务业、消费与城市景观为驱动的发展模式。</p>
+<h3>注释（Chicago Endnotes）</h3>
+<ol class="story-ref-list story-endnotes">
+<li>BBC News 中文，《中国改革开放40年：从贫困到全球第二大经济体》，访问日期：2026年5月8日，<a href="https://www.bbc.com/zhongwen/simp/chinese-news-46512070" target="_blank" rel="noopener">https://www.bbc.com/zhongwen/simp/chinese-news-46512070</a>。</li>
+<li>Yue-man Yeung，“China’s Openness and Reform at 30: Retrospect and Prospect,” <cite>China Review</cite> 9, no. 2（Fall 2009）：157–167。</li>
+<li>International Monetary Fund (IMF)，<cite>World Economic Outlook Database</cite>，April 2009。</li>
+</ol>`,
+        htmlEn: `<p><strong>Interviewee:</strong> Ms. Li (Zoe)</p>
+<p>This is a stainless-steel vegetable peeler with a wooden handle and a faded red string tied to its end.</p>
+<p>In Zoe’s memory, the peeler seems to have existed for as long as she can remember. It always occupied a fixed place in the kitchen, casually picked up for use and then returned to the same spot. As the family moved from one home to another over the years, the peeler moved with them, from one kitchen into the next, from one stage of life into another, yet it was never thrown away.</p>
+<p>Many other objects disappeared over time: old chairs, diverse household items, furniture that once occupied physical space. They were replaced, discarded, or forgotten as living spaces changed. But this peeler remained. It was not intentionally preserved as a keepsake; rather, it survived through continuous everyday use.</p>
+<p>Its presence is not visually remarkable. Compared to objects deliberately saved as memorials, ordinary household tools like this are rarely assigned symbolic importance. Yet precisely because of their ordinariness, they become more deeply embedded within everyday life. What this peeler carries is not a single dramatic memory, but rather the experience of a stable urban life lived by Zoe’s family in Hangzhou since the 1970s.</p>
+<p>This article explores how urban life in China after the 1970s was reorganized and gradually stabilized within the broader context of institutional reconstruction and social transformation, as well as the changes this process brought to housing patterns, occupational structures, and everyday life.</p>
+<h3>Reform and Opening-Up in 1978</h3>
+<p>It was only during this interview that Zoe asked her father for the first time about the origin of the peeler. The object was roughly dated to between 1978 and 1980. Although the exact year can no longer be determined, this period coincided with a major turning point in modern Chinese history: the early years of Reform and Opening-Up.</p>
+<p>In 1978, under the leadership of Deng Xiaoping, China began implementing the Reform and Opening-Up policy. The country gradually shifted away from a highly centralized planned economy toward a more market-oriented development model, encouraging private business, foreign investment, and urban industrial growth. Economic structures that had long relied on state allocation and centralized planning began to loosen, allowing markets and consumer goods to re-enter everyday life.</p>
+<p>This period profoundly transformed urban lifestyles in China. Consumer goods became increasingly accessible, population mobility expanded, and living standards improved. Chinese society entered a period of rapid urbanization and modernization. From an economic perspective, China quickly demonstrated significant growth potential: GDP growth reached 9.1% in 1982 and rose to 10.9% in 1983. Between 1978 and 2008, China’s GDP grew at an average annual rate of 9.79%, while the economy expanded from US$216.5 billion to US$4.4 trillion. At the same time, people’s understanding of what constituted a “better life” also began to change. Consumption gradually shifted away from merely satisfying basic needs toward pursuing convenience, efficiency, and improved quality of life.</p>
+<p>For many ordinary families, however, the most immediate experience of Reform and Opening-Up was not reflected in macroeconomic statistics, but in the appearance of new materials, new commodities, and new consumer choices within daily life. Zoe’s father recalled that the peeler was made of stainless steel. At the time, stainless steel was still considered a relatively new material, and products made from it had only recently begun appearing on the market. To him, it represented something modern and unfamiliar, which was why he decided to buy it.</p>
+<p>The peeler cost around one yuan, while his monthly salary at the time was only about thirty yuan. In other words, he spent nearly an entire day’s wages on a kitchen tool. Although such a purchase may seem ordinary today, at the time it reflected the emergence of a new way of thinking about everyday life: people were becoming willing to spend money on convenience, modernization, and new consumer products entering the market during the Reform era.</p>
+<p>The front tip of the peeler is pointed. Zoe remembers that when apples developed small rotten spots, family members would use the pointed tip to carefully dig out the damaged section and continue eating the rest. This practice reflected more than just a personal habit; it embodied a broader generational experience shaped by historical conditions. After living through periods such as the Great Leap Forward and the Cultural Revolution—times marked by material shortages and social instability—“not wasting” became an unspoken principle within many households. In conditions of scarcity, people tended to maximize the usefulness of food and household objects whenever possible. Even an apple would not be discarded if part of it could still be saved. Such habits of frugality shaped everyday practices and continued to influence later generations’ attitudes toward consumption and family memory.</p>
+<h3>Family Life</h3>
+<p>As the peeler entered the household, a typical urban family structure was also gradually taking shape. Zoe’s parents belonged to the common “dual-income household” model of the early Reform era, with both parents holding stable jobs and maintaining relatively fixed daily routines. Everyday life revolved around a repetitive rhythm of going to work, returning home, cooking, and caring for children.</p>
+<p>Compared to today’s more diversified lifestyles, entertainment opportunities for ordinary urban families at the time were relatively limited. Long-distance travel and consumption-based leisure activities were uncommon. Television had not yet become fully widespread, and commercial entertainment spaces remained limited. Domestic life centered primarily around work, household responsibilities, and neighborhood relationships. For many people, stability itself became one of the most important goals of the era.</p>
+<p>This sense of stability was closely connected to the gradual economic recovery and development that followed Reform and Opening-Up. After years of political campaigns and social upheaval, many families in the early 1980s began rebuilding expectations for the future. Stable employment, steady income, and the possibility of improving living conditions formed the foundation of a new urban life.</p>
+<p>At the same time, families slowly accumulated durable consumer goods such as bicycles, sewing machines, radios, televisions, and furniture. Some furniture was even handmade by Zoe’s father, since commercial products remained relatively limited and many households still relied on manual craftsmanship to supplement everyday life. Bicycles, household appliances, and furniture were commonly referred to as the “Three Big Items,” though the exact items varied across different decades. In general, they symbolized improving economic conditions and rising urban living standards.</p>
+<p>These household goods gradually formed the visual image of a modern family. For urban residents in the Reform era, consumption no longer focused solely on survival needs, but increasingly became connected to aspirations for a “better life.” Ordinary objects like this vegetable peeler entered households within this broader historical context, becoming part of the gradual modernization of everyday urban life in China.</p>
+<h3>Urban Development from the 1990s to the Present</h3>
+<p>Zoe was born in Hangzhou in 1993. In her memory, the family was already living in apartment buildings, urban infrastructure and public services were relatively developed, and daily life had entered a comparatively mature and stable stage. She remarked, “My childhood life was not very different from life today.”</p>
+<p>To some extent, this suggests that by the 1990s, the fundamental structure of urban life in China had already been established and stabilized. This included relatively fixed family structures, an education system centered around academic achievement, and weekend public spaces organized around parks, shopping centers, and residential communities.</p>
+<p>Her childhood memories are not dramatically different from those of many children growing up in Hangzhou in 2026: attending classes near West Lake, walking along the river with family members, fetching water from Hupao Spring, and carrying buckets of water back home. These seemingly ordinary fragments of daily life together form a highly normalized urban living experience. She also recalled a water-saving practice that still existed at the time: allowing the faucet to drip slowly overnight so that a bucket could gradually fill up and be used the next day. This behavior reflected the continuation of older habits of frugality and resource conservation.</p>
+<p>From a spatial perspective, although Zoe’s family moved multiple times within the city, they never left the southern bank area of the Qiantang River. The urban landscape itself continuously transformed over time: from docks and shipyards, to industrial and manufacturing zones, and eventually into today’s riverside spaces centered around tourism, leisure, and urban scenery. These shifting spatial functions also reflect the broader transformation of the city’s economic structure—from one driven primarily by industrial production toward one increasingly shaped by services, consumption, and urban cultural landscapes.</p>
+<h3>Endnotes (Chicago Style)</h3>
+<ol class="story-ref-list story-endnotes">
+<li>BBC News 中文, “中国改革开放40年：从贫困到全球第二大经济体,” BBC News 中文, accessed May 8, 2026, <a href="https://www.bbc.com/zhongwen/simp/chinese-news-46512070" target="_blank" rel="noopener">https://www.bbc.com/zhongwen/simp/chinese-news-46512070</a>.</li>
+<li>Yue-man Yeung, “China’s Openness and Reform at 30: Retrospect and Prospect,” <cite>China Review</cite> 9, no. 2 (Fall 2009): 157–167.</li>
+<li>International Monetary Fund (IMF), <cite>World Economic Outlook Database</cite>, April 2009.</li>
+</ol>`,
+    },
+};
+
+var storyModal = document.getElementById("storyModal");
+var storyModalTitle = document.getElementById("storyModalTitle");
+var storyPanelCn = document.getElementById("storyPanelCn");
+var storyPanelEn = document.getElementById("storyPanelEn");
+var storyLangTabs = storyModal.querySelectorAll(".story-lang-tab");
+
+function setStoryLang(lang){
+  var isCn = lang === "cn";
+  storyLangTabs.forEach(function(btn){
+    var active = btn.getAttribute("data-lang") === lang;
+    btn.classList.toggle("is-active", active);
+  });
+  storyPanelCn.classList.toggle("is-active", isCn);
+  storyPanelEn.classList.toggle("is-active", !isCn);
+  storyPanelCn.style.display = isCn ? "block" : "none";
+  storyPanelEn.style.display = isCn ? "none" : "block";
+  storyModalTitle.textContent = isCn ? storyModalTitle.getAttribute("data-title-cn") : storyModalTitle.getAttribute("data-title-en");
+}
+
+function openStoryModal(id){
+  var d = storyArticles[id]; if(!d) return;
+  storyModalTitle.setAttribute("data-title-cn", d.titleCn);
+  storyModalTitle.setAttribute("data-title-en", d.titleEn);
+  storyPanelCn.innerHTML = d.htmlCn;
+  storyPanelEn.innerHTML = d.htmlEn;
+  setStoryLang(currentSiteLang === "zh-CN" ? "cn" : "en");
+  storyModal.classList.add("is-open");
+  if (window.gsap) {
+    var smInner = storyModal.querySelector(".story-modal-inner");
+    gsap.fromTo(
+      smInner,
+      { autoAlpha: 0, y: 28, scale: 0.96 },
+      { autoAlpha: 1, y: 0, scale: 1, duration: 0.44, ease: "power3.out" }
+    );
+  }
+}
+
+document.querySelectorAll(".story-card").forEach(function(card){
+  card.onclick = function(){ openStoryModal(card.getAttribute("data-story")); };
+});
+storyModal.onclick = function(){ storyModal.classList.remove("is-open"); };
+storyModal.querySelector(".story-modal-inner").onclick = function(e){ e.stopPropagation(); };
+document.getElementById("storyModalClose").onclick = function(){ storyModal.classList.remove("is-open"); };
+storyLangTabs.forEach(function(btn){ btn.onclick = function(){ setStoryLang(btn.getAttribute("data-lang")); }; });
+
+if (window.matchMedia("(hover: hover)").matches) {
+  document.querySelectorAll("#stories .story-thumb").forEach(function(thumb){
+    thumb.addEventListener("mousemove", function(e){
+      var r = thumb.getBoundingClientRect();
+      thumb.style.setProperty("--mx", (((e.clientX-r.left)/r.width)*2-1)*6 + "px");
+      thumb.style.setProperty("--my", (((e.clientY-r.top)/r.height)*2-1)*6 + "px");
+    });
+    thumb.addEventListener("mouseleave", function(){
+      thumb.style.setProperty("--mx","0px"); thumb.style.setProperty("--my","0px");
+    });
+  });
+  var s2 = document.querySelector('.story-card[data-story="2"] .story-thumb img[data-hover-src]');
+  if(s2){ var def=s2.src, hov=s2.getAttribute("data-hover-src"); new Image().src=hov; s2.onmouseenter=function(){s2.src=hov;}; s2.onmouseleave=function(){s2.src=def;}; }
+}
+
+var timelineSection = document.getElementById("timeline");
+var timelineHeadingStack = timelineSection ? timelineSection.querySelector(".timeline-heading-stack") : null;
+var timelineGallery = document.getElementById("timelineGallery");
+var timelineProgress = 0;
+var timelineIntroTl = null;
+
+if (window.gsap && window.ScrollTrigger && timelineSection && timelineHeadingStack && timelineGallery) {
+  gsap.registerPlugin(ScrollTrigger);
+
+  gsap.set(timelineGallery, { force3D: true, transformOrigin: "50% 50%" });
+
+  timelineIntroTl = gsap.timeline({
+    defaults: { ease: "power2.out", force3D: true },
+    scrollTrigger: {
+      trigger: timelineSection,
+      start: "top top",
+      end: function () {
+        return "+=" + window.innerHeight * 1.52;
+      },
+      scrub: 0.36,
+      invalidateOnRefresh: true,
+      onUpdate: function (self) {
+        timelineProgress = self.progress;
+      }
+    }
+  });
+
+  var swapStart = 0.34;
+  var swapDur = 0.52;
+
+  timelineIntroTl
+    .fromTo(
+      timelineHeadingStack,
+      { y: "18vh", opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.26, ease: "power3.out" },
+      0
+    )
+    .to({}, { duration: 0.24 }, 0.1)
+    .to(
+      timelineHeadingStack,
+      { y: "-48vh", opacity: 0, duration: swapDur, ease: "power2.inOut" },
+      swapStart
+    )
+    .fromTo(
+      timelineGallery,
+      { y: "14vh", opacity: 0, scale: 0.94 },
+      { y: 0, opacity: 1, scale: 1, duration: swapDur, ease: "power3.out" },
+      swapStart
+    );
+
+  var prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var storiesSection = document.getElementById("stories");
+  var storiesHeading = storiesSection ? storiesSection.querySelector(".stories-head") : null;
+  var storiesCardsWrap = storiesSection ? storiesSection.querySelector(".story-cards") : null;
+  var storyCardEls = storiesSection ? storiesSection.querySelectorAll(".story-card") : null;
+  if (storiesSection && storiesHeading && storiesCardsWrap && storyCardEls && storyCardEls.length) {
+    if (prefersReducedMotion) {
+      gsap.set(storiesHeading, { opacity: 1, y: 0 });
+      gsap.set(storyCardEls, { opacity: 1, y: 0 });
+    } else {
+      gsap.set(storiesHeading, { opacity: 0, y: 36 });
+      gsap.set(storyCardEls, { opacity: 0, y: 44 });
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: storiesSection,
+          start: "top 86%",
+          toggleActions: "play none none reverse"
+        }
+      })
+        .to(storiesHeading, { opacity: 1, y: 0, duration: 0.72, ease: "power2.out" }, 0)
+        .to(storyCardEls, { opacity: 1, y: 0, duration: 0.62, stagger: 0.11, ease: "power2.out" }, 0.16);
+    }
+  }
+
+  var eventsSection = document.getElementById("events");
+  if (eventsSection) {
+    var eventsHeading = eventsSection.querySelector(".section-heading");
+    var eventTiles = eventsSection.querySelectorAll(".grid-item");
+    if (eventsHeading && eventTiles.length) {
+      if (prefersReducedMotion) {
+        gsap.set(eventsHeading, { opacity: 1, y: 0 });
+        gsap.set(eventTiles, { opacity: 1, y: 0 });
+      } else {
+        gsap.set(eventsHeading, { opacity: 0, y: 30 });
+        gsap.set(eventTiles, { opacity: 0, y: 36 });
+        gsap.timeline({
+          scrollTrigger: {
+            trigger: eventsSection,
+            start: "top 88%",
+            toggleActions: "play none none reverse"
+          }
+        })
+          .to(eventsHeading, { opacity: 1, y: 0, duration: 0.68, ease: "power2.out" }, 0)
+          .to(eventTiles, { opacity: 1, y: 0, duration: 0.5, stagger: 0.055, ease: "power2.out" }, 0.12);
+      }
+    }
+  }
+
+  timelineSection.addEventListener("click", function () {
+    if (!storiesSection) return;
+    var rect = timelineSection.getBoundingClientRect();
+    if (rect.top > window.innerHeight || rect.bottom < 0) return;
+    var st = timelineIntroTl && timelineIntroTl.scrollTrigger;
+    if (st && timelineProgress < 0.52) {
+      var target = st.start + (st.end - st.start) * 0.64;
+      window.scrollTo({ top: target, behavior: "smooth" });
+      return;
+    }
+    var navPad = 88;
+    window.scrollTo({ top: Math.max(0, storiesSection.offsetTop - navPad), behavior: "smooth" });
+  });
+
+  window.requestAnimationFrame(function () {
+    ScrollTrigger.refresh();
+  });
+}
+
+(function initNavScrollState() {
+  var nav = document.querySelector("nav");
+  if (!nav) return;
+  function upd() {
+    nav.classList.toggle("nav-scrolled", window.scrollY > 28);
+  }
+  upd();
+  window.addEventListener("scroll", upd, { passive: true });
+})();
+
+(function initCoverParallax() {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (!window.gsap || !window.ScrollTrigger) return;
+  var coverEl = document.getElementById("cover");
+  if (!coverEl) return;
+  var parallaxImg = coverEl.querySelector("div:last-of-type img");
+  if (!parallaxImg) return;
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.fromTo(
+    parallaxImg,
+    { yPercent: 2 },
+    {
+      yPercent: -5,
+      ease: "none",
+      scrollTrigger: {
+        trigger: coverEl,
+        start: "top bottom",
+        end: "bottom top",
+        scrub: 1.1
+      }
+    }
+  );
+})();
+
+var scrollTriggerResizeTimer;
+window.addEventListener("resize", function () {
+  clearTimeout(scrollTriggerResizeTimer);
+  scrollTriggerResizeTimer = setTimeout(function () {
+    if (window.ScrollTrigger) ScrollTrigger.refresh();
+  }, 160);
+});
+
+if (timelineGallery) {
+  timelineGallery.addEventListener("wheel", function (e) {
+    var el = timelineGallery;
+    var maxScroll = el.scrollWidth - el.clientWidth;
+    if (maxScroll <= 1) return;
+    var dy = e.deltaY;
+    var dx = e.deltaX;
+    var dominantX = Math.abs(dx) >= Math.abs(dy) * 0.85;
+    var scrollDelta = dominantX ? dx : dy;
+    if (Math.abs(scrollDelta) < 0.5) return;
+    var atLeft = el.scrollLeft <= 1;
+    var atRight = el.scrollLeft >= maxScroll - 1;
+    if ((scrollDelta < 0 && atLeft) || (scrollDelta > 0 && atRight)) return;
+    e.preventDefault();
+    el.scrollLeft += scrollDelta * 0.92;
+  }, { passive: false });
+}
+
+function applyTimelineLanguage(langCode){
+  document.querySelectorAll("#timeline .timeline-desc li").forEach(function(li){
+    li.textContent = langCode === "zh-CN" ? li.getAttribute("data-zh") : li.getAttribute("data-en");
+  });
+}
+function applyStoryCardsLanguage(langCode){
+  document.querySelectorAll("#stories .story-title,#stories .story-sub").forEach(function(el){
+    el.textContent = langCode === "zh-CN" ? el.getAttribute("data-zh") : el.getAttribute("data-en");
+  });
+}
+function applyEventsGridLanguage(langCode){
+  document.querySelectorAll("#events .grid-item .text").forEach(function(el){
+    el.textContent = langCode === "zh-CN" ? el.getAttribute("data-zh") : el.getAttribute("data-en");
+  });
+}
+function updateSiteLangToggleText(){
+  siteLangToggleBtn.textContent = currentSiteLang === "zh-CN" ? "中文 / EN" : "EN / 中文";
+}
+function applySiteLanguage(langCode){
+  currentSiteLang = langCode;
+  applyTimelineLanguage(langCode);
+  applyStoryCardsLanguage(langCode);
+  applyEventsGridLanguage(langCode);
+  if (eventModal.style.display === "flex" && activeEventId) renderEventModalByLang(activeEventId);
+  if (storyModal.classList.contains("is-open")) setStoryLang(langCode === "zh-CN" ? "cn" : "en");
+  updateSiteLangToggleText();
+}
+function toggleSiteLanguage(){
+  applySiteLanguage(currentSiteLang === "zh-CN" ? "en" : "zh-CN");
+}
+applySiteLanguage("en");
+
+(function () {
+  var about = document.getElementById("about");
+  if (!about) return;
+  function reveal() {
+    about.classList.add("about-in-view");
+  }
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    reveal();
+    return;
+  }
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            reveal();
+            io.disconnect();
+          }
+        });
+      },
+      { rootMargin: "0px 0px -8% 0px", threshold: 0.08 }
+    );
+    io.observe(about);
+  } else {
+    reveal();
+  }
+})();
+
+(function () {
+  var credits = document.getElementById("special-thanks");
+  if (!credits) return;
+  function revealCredits() {
+    credits.classList.add("credits-in-view");
+  }
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    revealCredits();
+    return;
+  }
+  if ("IntersectionObserver" in window) {
+    var io2 = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            revealCredits();
+            io2.disconnect();
+          }
+        });
+      },
+      { rootMargin: "0px 0px -10% 0px", threshold: 0.1 }
+    );
+    io2.observe(credits);
+  } else {
+    revealCredits();
+  }
+})();
+</script>
+<script>
+(function () {
+  var html = document.documentElement;
+  var loader = document.getElementById("coverLoader");
+  var cover = document.getElementById("cover");
+  if (!loader || !cover || !window.gsap) {
+    html.classList.remove("is-cover-loading");
+    if (loader) loader.style.display = "none";
+    return;
+  }
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    html.classList.remove("is-cover-loading");
+    loader.style.display = "none";
+    loader.setAttribute("aria-busy", "false");
+    return;
+  }
+
+  var loaderBack = loader.querySelector(".cover-loader-back");
+  var loaderGrain = loader.querySelector(".cover-loader-grain");
+  var label = loader.querySelector(".cover-loader-label");
+  var cn = cover.querySelector(".title-cn");
+  var en = cover.querySelector(".title-en");
+  var imgCol = cover.querySelector("div:last-of-type");
+  var nav = document.querySelector("nav");
+  var langBtn = document.getElementById("siteLangToggle");
+
+  gsap.set([cn, en], { opacity: 0.3, filter: "blur(14px)", letterSpacing: "0.3em" });
+  gsap.set(imgCol, { opacity: 0, y: 16 });
+  if (nav) gsap.set(nav, { autoAlpha: 0 });
+  if (langBtn) gsap.set(langBtn, { autoAlpha: 0 });
+
+  function finishIntro() {
+    label.style.animation = "none";
+    var tl = gsap.timeline({
+      defaults: { ease: "power2.inOut" },
+      onComplete: function () {
+        html.classList.remove("is-cover-loading");
+        loader.setAttribute("aria-hidden", "true");
+        loader.setAttribute("aria-busy", "false");
+        loader.style.pointerEvents = "none";
+        loader.style.visibility = "hidden";
+        gsap.set([cn, en], { clearProps: "filter" });
+        if (window.ScrollTrigger) ScrollTrigger.refresh();
+      }
+    });
+    tl.to(label, { autoAlpha: 0, duration: 0.88, ease: "power2.inOut" }, 0)
+      .to(
+        [cn, en],
+        {
+          opacity: 1,
+          filter: "blur(0px)",
+          letterSpacing: "0.035em",
+          duration: 1.82,
+          ease: "power2.inOut"
+        },
+        0.12
+      )
+      .to(cn, { letterSpacing: "0.06em", duration: 0.72, ease: "power2.inOut" }, 0.95)
+      .to(en, { letterSpacing: "0.02em", duration: 0.68, ease: "power2.inOut" }, 0.98)
+      .to(loaderGrain, { opacity: 0, duration: 1.25, ease: "power2.inOut" }, 0.28)
+      .to(loaderBack, { opacity: 0, duration: 1.52, ease: "power2.inOut" }, 0.38)
+      .to(imgCol, { opacity: 1, y: 0, duration: 1.12, ease: "power2.out" }, 0.72);
+    if (nav) tl.to(nav, { autoAlpha: 1, duration: 0.95, ease: "power2.inOut" }, 0.88);
+    if (langBtn) tl.to(langBtn, { autoAlpha: 1, duration: 0.85, ease: "power2.inOut" }, 0.92);
+  }
+
+  window.addEventListener("load", function () {
+    var kick = function () {
+      window.setTimeout(finishIntro, 420);
+    };
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(kick).catch(kick);
+    } else {
+      kick();
+    }
+  });
+})();
+</script>
+</body>
+</html>
